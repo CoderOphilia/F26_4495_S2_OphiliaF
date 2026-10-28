@@ -834,19 +834,6 @@ input:disabled, select:disabled  {
     border-left-color: var(--rose);
 }
 
-.page-footer  {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 24px 0;
-    margin-top: 18px;
-    border-top: 1px solid var(--blue-deep);
-    color: var(--blue-soft);
-    font: 8px/1.7 Consolas, monospace;
-    letter-spacing: 1.5px;
-}
-
 @media (min-width: 1100px)  {
     .waveform-card  {
         align-self: stretch;
@@ -1081,10 +1068,6 @@ input:disabled, select:disabled  {
     .guide-item p  {
         font-size: 10px;
     }
-    .page-footer  {
-        font-size: 7px;
-        letter-spacing: 1px;
-    }
 }
 
 @media (prefers-reduced-motion: reduce)  {
@@ -1156,7 +1139,6 @@ input:disabled, select:disabled  {
 .contact-email-button { display: flex; justify-content: space-between; padding: 12px 14px; border-radius: 3px; background: var(--navy); color: var(--paper); text-decoration: none; font-size: 12px; font-weight: 600; }
 .contact-panel .contact-note { font-size: 10px; margin: 10px 0 0; }
 .contact-panel :focus-visible { outline-color: var(--rose-ink); }
-.page-footer { padding-bottom: 85px; }
 @media (max-width: 580px) {
     h1 { font-size: clamp(38px, 10vw, 54px); }
     .wordmark { font-size: 9px; letter-spacing: .6px; }
@@ -1166,3 +1148,6 @@ input:disabled, select:disabled  {
     .contact-button { right: 18px; bottom: 18px; }
     .contact-panel { right: 18px; bottom: 80px; }
 }
+
+.status-message[hidden] { display: none; }
+.container { padding-bottom: 80px; }

@@ -46,6 +46,7 @@ const noiseConditions = [null, 40, 30, 20];
 
 function setStatus(message, isError = false) {
     statusMessage.textContent = message;
+    statusMessage.hidden = !message;
     statusMessage.classList.toggle("error", isError);
 }
 
@@ -660,14 +661,14 @@ analyzeButton.addEventListener("click", async () => {
 // ---------- INITIAL PAGE STATE ----------
 
 clearRecording();
-setStatus("Confirm your CSV contains cleaned data before uploading.");
+setStatus("");
 
 // ---------- CLEAN-DATA CONFIRMATION ----------
 cleanedData.addEventListener("change", () => {
     if (!cleanedData.checked) {
         fileInput.value = "";
         clearRecording();
-        setStatus("Confirm that your CSV contains cleaned data before uploading.");
+        setStatus("");
     } else {
         resetResult();
         setStatus("Ready to upload a cleaned CSV recording.");
