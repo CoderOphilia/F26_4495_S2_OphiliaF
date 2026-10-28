@@ -423,7 +423,10 @@ function drawWaveform() {
             plotHeight;
     }
 
-    context.font = "11px Arial";
+    const chartStyle = getComputedStyle(canvas);
+    const chartColor = name => chartStyle.getPropertyValue(name).trim();
+
+    context.font = "11px Consolas, monospace";
     context.lineWidth = 1;
 
     // Horizontal grid lines and amplitude labels.
@@ -435,13 +438,13 @@ function drawWaveform() {
 
         const y = mapY(value);
 
-        context.strokeStyle = "#e4e9f1";
+        context.strokeStyle = chartColor("--chart-grid");
         context.beginPath();
         context.moveTo(margin.left, y);
         context.lineTo(width - margin.right, y);
         context.stroke();
 
-        context.fillStyle = "#596579";
+        context.fillStyle = chartColor("--chart-label");
         context.fillText(
             value.toFixed(1),
             margin.left - 8,
@@ -495,10 +498,10 @@ function drawWaveform() {
         context.stroke();
     }
 
-    drawLine(originalSignal, "#315ce8");
+    drawLine(originalSignal, chartColor("--chart-original"));
 
     if (Number(noiseSlider.value) !== 0) {
-        drawLine(previewSignal, "#ea7b25");
+        drawLine(previewSignal, chartColor("--chart-preview"));
     }
 }
 

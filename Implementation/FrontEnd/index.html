@@ -2,274 +2,110 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1E3148">
+    <meta name="description" content="Explore voltage waveforms, measurement noise, and power quality disturbances.">
     <title>Power Quality Analyzer</title>
-
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
-
 <body>
-    <main class="container">
+    <a class="skip-link" href="#workspace">Skip to the workspace</a>
+    <div class="container">
+        <nav class="topbar" aria-label="Main navigation">
+            <a class="wordmark" href="#workspace" aria-label="Power Quality Analyzer workspace">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" fill="none"><path d="M3 17h6l3-10 6 20 4-14 3 4h4" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+                </span>
+                <span>POWER QUALITY<span class="wordmark-sub">A SIGNAL RESEARCH WORKSPACE</span></span>
+            </a>
+            <a class="guide-link" href="#signal-guide">Know your signals <span aria-hidden="true">↗</span></a>
+        </nav>
 
-        <!-- PAGE INTRODUCTION -->
         <header class="page-header">
-            <span class="badge">
-                CSIS 4495 · Applied Research Project
-            </span>
-
-            <h1>Power Quality Analyzer</h1>
-
-            <p class="page-description">
-                Visualize voltage recordings, explore measurement noise,
-                and identify electrical signal disturbances.
-            </p>
+            <div>
+                <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> VOLTAGE / WAVEFORMS / MACHINE LEARNING</p>
+                <h1>Power Quality<span>Analyzer.</span></h1>
+            </div>
+            <div class="header-note">
+                <span class="note-index">01 — THE WORKSPACE</span>
+                <p>A closer look at the electricity behind the equipment.</p>
+                <p class="header-help">Load a recording. Explore the waveform.<br> Investigate the disturbance.</p>
+            </div>
         </header>
 
-        <div class="dashboard">
-
-            <!-- LEFT COLUMN -->
-            <aside class="sidebar">
-
-                <!-- CSV UPLOAD -->
-                <section class="card" aria-labelledby="uploadHeading">
-                    <div class="section-heading">
-                        <span class="step-number">1</span>
-                        <h2 id="uploadHeading">Upload a recording</h2>
+        <main id="workspace" class="dashboard" tabindex="-1">
+            <section class="waveform-card" aria-labelledby="waveformHeading">
+                <div class="panel-topline"><span class="eyebrow">SIGNAL VIEW</span><span class="panel-tag">TIME DOMAIN</span></div>
+                <div class="chart-heading">
+                    <h2 id="waveformHeading">The waveform</h2>
+                    <span class="axis-note">RELATIVE AMPLITUDE / SECONDS</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="waveform" role="img" aria-label="Voltage waveform. No recording loaded.">Your browser does not support the waveform canvas.</canvas>
+                    <div class="chart-empty" id="chartEmpty">
+                        <svg class="empty-wave" viewBox="0 0 260 80" fill="none" aria-hidden="true">
+                            <path d="M0 40h25c12 0 12-29 25-29s13 58 26 58 13-58 26-58 13 58 26 58 13-58 26-58 13 58 26 58 13-29 25-29h55" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <strong>No recording loaded</strong>
+                        <p>Choose a CSV to bring your signal into view.</p>
                     </div>
+                </div>
+                <div class="chart-legend"><span><i class="legend-line original"></i>Uploaded recording</span><span><i class="legend-line preview"></i>With added noise</span></div>
+                <div class="statistics">
+                    <div class="stat"><span>MEASUREMENTS</span><strong id="sampleCount">—</strong></div>
+                    <div class="stat"><span>EST. SAMPLE RATE</span><strong id="sampleRate">—</strong></div>
+                    <div class="stat"><span>PREVIEW RMS</span><strong id="rmsValue">—</strong></div>
+                </div>
+                <div class="chart-footer"><span>Keep a copy of the signal you explore.</span><button type="button" id="downloadButton" class="button button-download" disabled>Download CSV <span aria-hidden="true">↓</span></button></div>
+            </section>
 
-                    <p class="section-description">
-                        Select a CSV containing your voltage measurements.
-                    </p>
-
-                    <label for="csvFile">Voltage recording</label>
-
-                    <input
-                        type="file"
-                        id="csvFile"
-                        accept=".csv"
-                        aria-describedby="fileHelp fileName"
-                    >
-
-                    <p id="fileName" class="file-name">
-                        No file selected.
-                    </p>
-
-                    <div class="format-guide" id="fileHelp">
-                        <strong>Required CSV columns</strong>
-
-                        <code>time_seconds,voltage_relative</code>
-
-                        <p>
-                            Use evenly spaced timestamps in seconds
-                            and relative voltage amplitudes.
-                        </p>
-                    </div>
+            <aside class="sidebar" aria-label="Recording and analysis controls">
+                <section class="upload-panel" aria-labelledby="uploadHeading">
+                    <div class="panel-topline"><span class="eyebrow">01 / START HERE</span><span class="small-cross" aria-hidden="true">+</span></div>
+                    <h2 id="uploadHeading">Bring your own signal.</h2>
+                    <p class="section-description">Start with a voltage recording in CSV format.</p>
+                    <input type="file" class="file-input" id="csvFile" accept=".csv" aria-describedby="fileHelp fileName">
+                    <label for="csvFile" class="upload-zone"><span class="upload-icon" aria-hidden="true">↑</span><span>Choose a CSV recording<small>Click to browse your files</small></span><span aria-hidden="true">↗</span></label>
+                    <p id="fileName" class="file-name">No file selected.</p>
+                    <details class="format-guide" id="fileHelp"><summary>CSV format guide</summary><code>time_seconds,voltage_relative</code><p>Two numeric columns, evenly spaced timestamps in seconds, and up to 50,000 measurements. Maximum file size: 5 MB.</p></details>
                 </section>
 
-                <!-- NOISE AND MODEL CONTROLS -->
-                <section class="card" aria-labelledby="controlsHeading">
-                    <div class="section-heading">
-                        <span class="step-number">2</span>
-                        <h2 id="controlsHeading">Explore and analyze</h2>
+                <section class="controls-panel" aria-labelledby="controlsHeading">
+                    <div class="panel-topline"><span class="eyebrow">02 / EXPLORE</span><span class="small-cross" aria-hidden="true">↗</span></div>
+                    <h2 id="controlsHeading">Test the signal.</h2>
+                    <div class="field noise-field">
+                        <div class="label-row"><label for="noiseSlider">Added noise</label><output id="noiseLabel" for="noiseSlider" class="value-badge">Off</output></div>
+                        <input type="range" id="noiseSlider" min="0" max="3" step="1" value="0" disabled aria-describedby="noiseHelp">
+                        <div class="range-labels" aria-hidden="true"><span>Off</span><span>40 dB</span><span>30 dB</span><span>20 dB</span></div>
+                        <p id="noiseHelp" class="help-text">Lower SNR adds more noise. Off keeps the uploaded recording.</p>
                     </div>
-
-                    <div class="field">
-                        <div class="label-row">
-                            <label for="noiseSlider">
-                                Added noise
-                            </label>
-
-                            <output
-                                id="noiseLabel"
-                                for="noiseSlider"
-                                class="value-badge"
-                            >
-                                Off
-                            </output>
-                        </div>
-
-                        <input
-                            type="range"
-                            id="noiseSlider"
-                            min="0"
-                            max="3"
-                            step="1"
-                            value="0"
-                            disabled
-                            aria-describedby="noiseHelp"
-                        >
-
-                        <div class="range-labels" aria-hidden="true">
-                            <span>Off</span>
-                            <span>40 dB</span>
-                            <span>30 dB</span>
-                            <span>20 dB</span>
-                        </div>
-
-                        <p id="noiseHelp" class="help-text">
-                            Lower target SNR adds more noise.
-                            Off preserves the uploaded recording.
-                        </p>
-                    </div>
-
-                    <div class="field">
-                        <label for="modelSelect">
-                            Classification model
-                        </label>
-
-                        <select id="modelSelect">
-                            <option value="random_forest">
-                                Random Forest
-                            </option>
-
-                            <option value="svm">
-                                Support Vector Machine
-                            </option>
-                        </select>
-                    </div>
-
-                    <button
-                        type="button"
-                        id="analyzeButton"
-                        class="button button-primary"
-                        disabled
-                    >
-                        Analyze Signal
-                    </button>
-
-                    <p class="help-text">
-                        Analysis uses the currently displayed signal preview.
-                    </p>
+                    <div class="field"><label for="modelSelect">Classification model</label><select id="modelSelect"><option value="random_forest">Random Forest</option><option value="svm">Support Vector Machine</option></select></div>
+                    <button type="button" id="analyzeButton" class="button button-primary" disabled>Analyze Signal</button>
+                    <p class="help-text button-help">Classifies the currently displayed preview.</p>
                 </section>
             </aside>
 
-            <!-- RIGHT COLUMN -->
-            <div class="main-content">
+            <section class="result-card" aria-labelledby="resultHeading">
+                <div class="result-intro"><p class="eyebrow">03 / MODEL OUTPUT</p><h2 id="resultHeading">What does<br> the signal say?</h2></div>
+                <div class="result-panel" aria-live="polite"><span class="result-label">PREDICTED DISTURBANCE</span><p id="prediction">Not analyzed yet</p><p id="confidence">Upload a recording, then select Analyze Signal.</p><p class="result-note">A model probability is an estimate, not overall model accuracy.</p></div>
+                <div class="supported-classes"><p class="eyebrow">SUPPORTED CLASSES</p><div class="class-list"><span>Normal</span><span>Sag</span><span>Swell</span><span>Interruption</span><span>Harmonic distortion</span></div></div>
+            </section>
+        </main>
 
-                <!-- WAVEFORM -->
-                <section class="card" aria-labelledby="waveformHeading">
-                    <div class="section-heading">
-                        <span class="step-number">3</span>
-                        <h2 id="waveformHeading">Voltage waveform</h2>
-                    </div>
-
-                    <p class="section-description">
-                        Examine how the signal changes over time.
-                    </p>
-
-                    <div class="chart-container">
-                        <canvas
-                            id="waveform"
-                            role="img"
-                            aria-label="Voltage waveform. No recording loaded."
-                        >
-                            Your browser does not support the waveform canvas.
-                        </canvas>
-
-                        <div class="chart-empty" id="chartEmpty">
-                            <span class="empty-symbol" aria-hidden="true">
-                                ∿
-                            </span>
-
-                            <strong>Your waveform will appear here</strong>
-
-                            <p>
-                                Upload a voltage CSV to begin exploring.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="chart-legend">
-                        <span>
-                            <i class="legend-line original"></i>
-                            Uploaded recording
-                        </span>
-
-                        <span>
-                            <i class="legend-line preview"></i>
-                            Preview with added noise
-                        </span>
-                    </div>
-
-                    <div class="statistics">
-                        <div class="stat">
-                            <span>Measurements</span>
-                            <strong id="sampleCount">—</strong>
-                        </div>
-
-                        <div class="stat">
-                            <span>Estimated sample rate</span>
-                            <strong id="sampleRate">—</strong>
-                        </div>
-
-                        <div class="stat">
-                            <span>Preview RMS amplitude</span>
-                            <strong id="rmsValue">—</strong>
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        id="downloadButton"
-                        class="button button-secondary"
-                        disabled
-                    >
-                        Download Preview CSV
-                    </button>
-                </section>
-
-                <!-- CLASSIFICATION RESULT -->
-                <section class="card" aria-labelledby="resultHeading">
-                    <div class="section-heading">
-                        <span class="step-number">4</span>
-                        <h2 id="resultHeading">Analysis result</h2>
-                    </div>
-
-                    <div class="result-panel" aria-live="polite">
-                        <span class="result-label">
-                            Predicted disturbance
-                        </span>
-
-                        <p id="prediction">Not analyzed yet</p>
-
-                        <p id="confidence">
-                            Upload a recording, then select Analyze Signal.
-                        </p>
-                    </div>
-
-                    <div class="class-list">
-                        <span>Normal</span>
-                        <span>Sag</span>
-                        <span>Swell</span>
-                        <span>Interruption</span>
-                        <span>Harmonic distortion</span>
-                    </div>
-
-                    <p class="help-text">
-                        Model probability is an estimate, not a measurement
-                        of overall model accuracy.
-                    </p>
-                </section>
+        <section class="signal-guide" id="signal-guide" aria-labelledby="guideHeading">
+            <div class="guide-heading"><h2 id="guideHeading">Five signals. Different stories.</h2><span class="eyebrow">A QUICK FIELD GUIDE</span></div>
+            <div class="guide-grid">
+                <article class="guide-item normal"><span class="guide-number">01</span><h3>Normal</h3><p>A regular sine wave with a steady amplitude.</p></article>
+                <article class="guide-item sag"><span class="guide-number">02</span><h3>Sag</h3><p>A temporary reduction in voltage magnitude.</p></article>
+                <article class="guide-item swell"><span class="guide-number">03</span><h3>Swell</h3><p>A temporary increase in voltage magnitude.</p></article>
+                <article class="guide-item interruption"><span class="guide-number">04</span><h3>Interruption</h3><p>A temporary loss or near loss of voltage.</p></article>
+                <article class="guide-item harmonics"><span class="guide-number">05</span><h3>Harmonics</h3><p>Added frequency multiples that change the wave's shape.</p></article>
             </div>
-        </div>
+        </section>
 
-        <!-- STATUS MESSAGES -->
-        <p id="status" class="status-message" role="status" aria-live="polite">
-            No recording loaded.
-        </p>
-
-        <footer class="page-footer">
-            <p>
-                Research prototype · Ophilia Fradarick · CSIS 4495
-            </p>
-        </footer>
-
-    </main>
+        <p id="status" class="status-message" role="status" aria-live="polite">No recording loaded.</p>
+        <footer class="page-footer"><span>OPHILIA FRADARICK</span><span>CSIS 4495 / APPLIED RESEARCH</span><span>RESEARCH PROTOTYPE</span></footer>
+    </div>
 </body>
 </html>
