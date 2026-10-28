@@ -7,7 +7,7 @@ Student ID: 300386351
 ---
 Email ID: fradaricko@student.douglascollege.ca
 
-## Run the web application locally
+## Run Voltage Signal Checker locally
 
 Requirements: Python 3.10 or newer. Run these commands from the repository root:
 
@@ -16,15 +16,28 @@ python -m pip install -r Implementation/BackEnd/requirements.txt
 python Implementation/BackEnd/app.py
 ```
 
-Open http://127.0.0.1:5000 in your browser and keep the server terminal running.
-Upload `Implementation/normal_signal.csv` to validate the recording and optionally view its waveform.
-Select Check signal to request a classification. Stop the server with Ctrl+C.
+Open http://127.0.0.1:5000 and keep the server terminal running.
+
+1. Confirm that your CSV contains cleaned data using the checkbox.
+2. Upload `Implementation/normal_signal.csv` or a compatible cleaned recording.
+3. Explore the waveform, noise slider, model selection, RMS measurements, and CSV download.
+4. Select Analyze Signal to request a normal-or-disturbance result.
+
+Unchecking the cleaned-data confirmation clears the current recording and
+blocks further upload and analysis. The confirmation is a user declaration;
+CSV format checks do not automatically clean or certify a recording.
+Missing or invalid values, duplicate timestamps, and irregular sampling are
+rejected. Actual voltage disturbances should be preserved during data cleaning.
+
+The Contact us bubble opens an email panel using the requested placeholder
+address `ophiliaproject@gmail.com`. Its email links open the user's email
+application; this is not a live-chat service and no email is sent automatically.
 
 The Flask server currently serves the front end. Model training and the
-`POST /api/classify` endpoint are not implemented yet, so the Check signal
-button does not produce ML predictions at this stage. The main interface is
-designed to show only Normal signal or Problem detected followed by the
-disturbance name, without model selection, noise controls, or probability scores.
+`POST /api/classify` endpoint are not implemented yet, so Analyze Signal does not
+produce real ML predictions at this stage. Once connected, results display
+Normal signal or Problem detected followed by the disturbance name, without
+showing a probability score. Stop the server with Ctrl+C.
 
 ## Run the normal signal generator
 
