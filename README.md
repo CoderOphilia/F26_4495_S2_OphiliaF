@@ -17,12 +17,14 @@ python Implementation/BackEnd/app.py
 ```
 
 Open http://127.0.0.1:5000 in your browser and keep the server terminal running.
-Upload `Implementation/normal_signal.csv` to try CSV validation, waveform display,
-noise preview, RMS measurements, and CSV download. Stop the server with Ctrl+C.
+Upload `Implementation/normal_signal.csv` to validate the recording and optionally view its waveform.
+Select Check signal to request a classification. Stop the server with Ctrl+C.
 
 The Flask server currently serves the front end. Model training and the
-`POST /api/classify` endpoint are not implemented yet, so the Analyze Signal
-button does not produce ML predictions at this stage.
+`POST /api/classify` endpoint are not implemented yet, so the Check signal
+button does not produce ML predictions at this stage. The main interface is
+designed to show only Normal signal or Problem detected followed by the
+disturbance name, without model selection, noise controls, or probability scores.
 
 ## Run the normal signal generator
 
