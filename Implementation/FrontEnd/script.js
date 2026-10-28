@@ -17,7 +17,6 @@ const rmsValue = document.getElementById("rmsValue");
 const prediction = document.getElementById("prediction");
 const resultMessage = document.getElementById("resultMessage");
 const cleanedData = document.getElementById("cleanedData");
-const cleaningNotice = document.getElementById("cleaningNotice");
 const contactButton = document.getElementById("contactButton");
 const contactPanel = document.getElementById("contactPanel");
 const contactClose = document.getElementById("contactClose");
@@ -211,8 +210,7 @@ function parseCSV(text) {
 fileInput.addEventListener("change", async () => {
     if (!cleanedData.checked) {
         fileInput.value = "";
-        cleaningNotice.hidden = false;
-        setStatus("Only cleaned data can be uploaded. For cleaning help, email ophiliaproject@gmail.com.", true);
+        setStatus("Confirm that your CSV contains cleaned data before uploading.", true);
         return;
     }
     const file = fileInput.files[0];
@@ -238,7 +236,6 @@ fileInput.addEventListener("change", async () => {
         originalSignal = recording.signal;
         estimatedSampleRate = recording.sampleRate;
         uploadedFileName = file.name;
-        cleaningNotice.hidden = true;
 
         fileName.textContent = uploadedFileName;
 
@@ -257,9 +254,8 @@ fileInput.addEventListener("change", async () => {
     } catch (error) {
         clearRecording();
         fileInput.value = "";
-        cleaningNotice.hidden = false;
 
-        setStatus(error.message + " For data-cleaning help, email ophiliaproject@gmail.com.", true);
+        setStatus(error.message, true);
     } finally {
         busy = false;
         updateControls();
@@ -664,16 +660,14 @@ analyzeButton.addEventListener("click", async () => {
 // ---------- INITIAL PAGE STATE ----------
 
 clearRecording();
-cleaningNotice.hidden = cleanedData.checked;
 setStatus("Confirm your CSV contains cleaned data before uploading.");
 
 // ---------- CLEAN-DATA CONFIRMATION ----------
 cleanedData.addEventListener("change", () => {
-    cleaningNotice.hidden = cleanedData.checked;
     if (!cleanedData.checked) {
         fileInput.value = "";
         clearRecording();
-        setStatus("For data that has not been cleaned, email the analysis team at ophiliaproject@gmail.com.");
+        setStatus("Confirm that your CSV contains cleaned data before uploading.");
     } else {
         resetResult();
         setStatus("Ready to upload a cleaned CSV recording.");

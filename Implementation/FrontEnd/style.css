@@ -1110,10 +1110,6 @@ input:disabled, select:disabled  {
 .cleaned-confirmation { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; }
 .cleaned-confirmation input { width: 18px; height: 18px; margin: 0; flex-shrink: 0; accent-color: var(--green-ink); }
 .cleaned-confirmation input:focus-visible { outline-color: var(--ink); }
-#cleanedDataHelp { font-size: 11px; margin: 7px 0 0 28px; color: var(--blue-deep); }
-.cleaning-notice { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--blue-soft); font-size: 12px; }
-.cleaning-notice a { color: var(--navy); font-weight: 650; text-underline-offset: 3px; overflow-wrap: anywhere; }
-.cleaning-notice[hidden] { display: none; }
 .file-input:disabled + .upload-zone { cursor: not-allowed; opacity: .65; }
 .contact-button {
     position: fixed;
@@ -1167,8 +1163,6 @@ input:disabled, select:disabled  {
     .data-readiness { padding: 17px; }
     .cleaned-confirmation { font-size: 13px; align-items: start; }
     .cleaned-confirmation input { margin-top: 2px; }
-    #cleanedDataHelp { margin-left: 28px; font-size: 10px; }
-    .cleaning-notice { font-size: 11px; }
     .contact-button { right: 18px; bottom: 18px; }
     .contact-panel { right: 18px; bottom: 80px; }
 }
