@@ -81,9 +81,9 @@ function clearRecording() {
     estimatedSampleRate = 0;
 
     fileName.textContent = "No file selected.";
-    sampleCount.textContent = "—";
-    sampleRate.textContent = "—";
-    rmsValue.textContent = "—";
+    sampleCount.textContent = "No data";
+    sampleRate.textContent = "No data";
+    rmsValue.textContent = "No data";
 
     noiseSlider.value = "0";
     noiseLabel.textContent = "Off";

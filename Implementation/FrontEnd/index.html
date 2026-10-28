@@ -19,7 +19,7 @@
                 </span>
                 <span>VOLTAGE SIGNAL CHECKER<span class="wordmark-sub">POWER QUALITY ANALYSIS</span></span>
             </a>
-            <a class="guide-link" href="#signal-guide">Know your signals <span aria-hidden="true">↗</span></a>
+            <a class="guide-link" href="#signal-guide">Know your signals</a>
         </nav>
 
         <header class="page-header">
@@ -28,7 +28,7 @@
                 <h1>Check your device's<span>power quality.</span></h1>
             </div>
             <div class="header-note">
-                <span class="note-index">01 — THE WORKSPACE</span>
+                <span class="note-index">01 THE WORKSPACE</span>
                 <p>Start with a cleaned voltage recording.</p>
                 <p class="header-help">Upload your CSV. Explore the waveform.<br> Check for a power quality problem.</p>
             </div>
@@ -61,11 +61,11 @@
                 </div>
                 <div class="chart-legend"><span><i class="legend-line original"></i>Uploaded recording</span><span><i class="legend-line preview"></i>With added noise</span></div>
                 <div class="statistics">
-                    <div class="stat"><span>MEASUREMENTS</span><strong id="sampleCount">—</strong></div>
-                    <div class="stat"><span>EST. SAMPLE RATE</span><strong id="sampleRate">—</strong></div>
-                    <div class="stat"><span>PREVIEW RMS</span><strong id="rmsValue">—</strong></div>
+                    <div class="stat"><span>MEASUREMENTS</span><strong id="sampleCount">No data</strong></div>
+                    <div class="stat"><span>EST. SAMPLE RATE</span><strong id="sampleRate">No data</strong></div>
+                    <div class="stat"><span>PREVIEW RMS</span><strong id="rmsValue">No data</strong></div>
                 </div>
-                <div class="chart-footer"><span>Keep a copy of the signal you explore.</span><button type="button" id="downloadButton" class="button button-download" disabled>Download CSV <span aria-hidden="true">↓</span></button></div>
+                <div class="chart-footer"><span>Keep a copy of the signal you explore.</span><button type="button" id="downloadButton" class="button button-download" disabled>Download CSV</button></div>
             </section>
 
             <aside class="sidebar" aria-label="Recording and analysis controls">
@@ -74,13 +74,13 @@
                     <h2 id="uploadHeading">Upload your CSV file.</h2>
                     <p class="section-description">Only cleaned voltage recordings can be uploaded.</p>
                     <input type="file" class="file-input" id="csvFile" accept=".csv" disabled aria-describedby="fileHelp fileName">
-                    <label for="csvFile" class="upload-zone"><span class="upload-icon" aria-hidden="true">↑</span><span>Choose a CSV recording<small>Click to browse your files</small></span><span aria-hidden="true">↗</span></label>
+                    <label for="csvFile" class="upload-zone"><span>Choose a CSV recording<small>Click to browse your files</small></span></label>
                     <p id="fileName" class="file-name">No file selected.</p>
                     <details class="format-guide" id="fileHelp"><summary>CSV format guide</summary><code>time_seconds,voltage_relative</code><p>Two numeric columns, evenly spaced timestamps in seconds, and up to 50,000 measurements. Maximum file size: 5 MB.</p></details>
                 </section>
 
                 <section class="controls-panel" aria-labelledby="controlsHeading">
-                    <div class="panel-topline"><span class="eyebrow">02 / EXPLORE</span><span class="small-cross" aria-hidden="true">↗</span></div>
+                    <div class="panel-topline"><span class="eyebrow">02 / EXPLORE</span></div>
                     <h2 id="controlsHeading">Test the signal.</h2>
                     <div class="field noise-field">
                         <div class="label-row"><label for="noiseSlider">Added noise</label><output id="noiseLabel" for="noiseSlider" class="value-badge">Off</output></div>
@@ -125,7 +125,7 @@
         <h2 id="contactHeading">Need a hand with your data?</h2>
         <p>If your recording has not been cleaned, email the analysis team before uploading it.</p>
         <a class="contact-email" href="mailto:ophiliaproject@gmail.com?subject=Voltage%20Signal%20Checker%20-%20Data%20Cleaning%20Help">ophiliaproject@gmail.com</a>
-        <a class="contact-email-button" href="mailto:ophiliaproject@gmail.com?subject=Voltage%20Signal%20Checker%20-%20Data%20Cleaning%20Help">Email analysis team <span aria-hidden="true">↗</span></a>
+        <a class="contact-email-button" href="mailto:ophiliaproject@gmail.com?subject=Voltage%20Signal%20Checker%20-%20Data%20Cleaning%20Help">Email analysis team</a>
         <p class="contact-note">Opens your email application.</p>
     </section>
 </body>
