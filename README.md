@@ -6,7 +6,8 @@ Student Name: Ophilia Fradarick
 Student ID: 300386351
 ---
 Email ID: fradaricko@student.douglascollege.ca
-Midcourse Check-in: https://drive.google.com/drive/folders/1DPTc4ESwvO8PaecIAiazgHy1b_6ipcJI?usp=drive_link
+
+
 ## Run Voltage Signal Checker locally
 
 Requirements: Python 3.10 or newer. Run these commands from the repository root:
