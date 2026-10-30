@@ -51,3 +51,35 @@ The reusable `generate_normal_signal` function accepts frequency, sample rate,
 duration, relative amplitude, and phase in radians. It returns timestamp and
 signal arrays. The default example contains 1,200 measurements of a 60 Hz sine
 wave over a 0.2-second recording interval. No CSV is written by this module.
+
+## Generate a labelled synthetic dataset
+
+From the repository root:
+
+```bash
+python Implementation/BackEnd/generate_dataset.py
+```
+
+This creates 1,000 clean synthetic recordings (200 per class) for normal, sag,
+swell, interruption, and harmonic distortion. Frequency, amplitude, phase,
+event timing, and disturbance parameters vary between examples. The default
+seed is 42; generation parameters and individual sample seeds are saved.
+
+Output goes to `Implementation/Data/Synthetic/`: a NumPy archive, metadata CSV,
+manifest, and five upload-compatible examples in `examples/`. The original
+`Implementation/normal_signal.csv` is preserved. Output folders must be empty;
+use `--output` to generate another dataset in a separate directory.
+
+The default partitions contain 700 training, 150 validation, and 150 test
+recordings. Future noisy copies must retain their original recording's
+partition. Generated data stays local and is ignored by Git. These simplified
+mathematical examples are not hardware-validated or certified measurements.
+Feature extraction, trained classifiers, and the API remain the next stage.
+
+See [dataset format, parameter ranges, and evaluation rules](Implementation/Data/README.md).
+
+Run the generation checks:
+
+```bash
+python -m unittest discover -s Implementation/BackEnd/tests -v
+```

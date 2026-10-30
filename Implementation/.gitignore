@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+
+# Recreate local datasets using BackEnd/generate_dataset.py.
+Data/Synthetic*/
+
+# Local document drafts and rendering work are not application source.
+tmp/
+output/
