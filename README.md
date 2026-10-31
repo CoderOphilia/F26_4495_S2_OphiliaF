@@ -8,7 +8,7 @@ Student ID: 300386351
 Email ID: fradaricko@student.douglascollege.ca
 
 
-## Run Voltage Signal Checker locally
+## Run Power Quality Analyzer locally
 
 Requirements: Python 3.10 or newer. Run these commands from the repository root:
 
