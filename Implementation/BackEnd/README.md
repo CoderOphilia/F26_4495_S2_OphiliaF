@@ -96,7 +96,7 @@ the API classifies those supplied values without adding it again.
 A successful response contains only the class, for example
 `{"prediction":"sag"}`. Invalid JSON returns 400, unsupported recording or
 settings return 422, oversized requests return 413, and missing/incompatible
-trained models return 503. Request bodies are limited to 5 MB. The server
+trained models or unavailable history storage return 503. Request bodies are limited to 5 MB. The server
 loads its configured local model bundle, checks its feature and runtime
 versions, and does not accept model uploads.
 
@@ -113,7 +113,29 @@ requests, missing models, static files, and request limits.
 This is a research prototype evaluated on simplified generated single events.
 Its clean synthetic scores do not establish accuracy on hardware recordings,
 combined disturbances, other sampling conditions, or arbitrary voltage scales.
-SQLite history remains the November 17–23 milestone.
+SQLite persistence and history retrieval are implemented. A history panel in
+the web interface is the remaining part of that milestone.
+
+## Saved analysis history
+
+Every successful classification is saved to `Data/analysis_history.sqlite3`.
+The database is created automatically on the first saved analysis. Each record
+contains the predicted class, model, added noise setting, UTC timestamp, and
+analysis time in milliseconds. Timing includes model loading, feature
+extraction, and prediction, and excludes saving the record. A cold first
+request can therefore take longer than later requests.
+
+After analyzing a signal, open http://127.0.0.1:5000/api/history to inspect
+the newest 20 results as JSON. Use `/api/history?limit=5` to retrieve five.
+Limits must be whole numbers between 1 and 100. An empty history returns
+`{"history":[]}`. The website history panel will use this endpoint.
+
+Records persist after the server restarts. Invalid inputs and failed model
+requests do not create history records. A database failure returns 503 so the
+caller knows that the analysis was not saved. Saves use a transaction and a
+separate connection for each operation. Stored summaries do not include
+uploaded waveform arrays. The local database and its journal files are ignored
+by Git. Python includes SQLite support, so no additional package is needed.
 
 ## Noise robustness experiment
 

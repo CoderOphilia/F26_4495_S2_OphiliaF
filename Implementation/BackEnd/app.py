@@ -2,6 +2,8 @@
 
 from functools import lru_cache
 from pathlib import Path
+import sqlite3
+from time import perf_counter
 
 from flask import Flask, jsonify, request
 import joblib
@@ -13,6 +15,7 @@ from feature_extraction import (
     FEATURE_NAMES, FEATURE_VERSION, SAMPLE_COUNT, SAMPLE_RATE_HZ, extract_features,
 )
 from signal_generator import SIGNAL_TYPES
+from history import read_history, save_analysis
 
 
 frontend_folder = Path(__file__).resolve().parent.parent / "FrontEnd"
@@ -25,6 +28,7 @@ app = Flask(
 app.config.update(
     MAX_CONTENT_LENGTH=5 * 1024 * 1024,
     MODEL_BUNDLE=Path(__file__).resolve().parent.parent / "Models" / "classifiers.joblib",
+    DATABASE_PATH=Path(__file__).resolve().parent.parent / "Data" / "analysis_history.sqlite3",
 )
 
 
@@ -110,6 +114,7 @@ def classify():
     except ValueError as error:
         return jsonify(error=str(error)), 422
     path = Path(app.config["MODEL_BUNDLE"])
+    analysis_started = perf_counter()
     try:
         bundle = load_bundle(str(path.resolve()), path.stat().st_mtime_ns)
         features = extract_features(voltage, SAMPLE_RATE_HZ)
@@ -119,7 +124,30 @@ def classify():
     except Exception:
         app.logger.exception("Classification model could not be used")
         return jsonify(error="The classification service needs its trained models. Contact the application operator."), 503
+    analysis_time_ms = (perf_counter() - analysis_started) * 1000
+    try:
+        save_analysis(
+            app.config["DATABASE_PATH"], prediction=prediction, model=model_name,
+            added_noise_snr_db=payload.get("added_noise_snr_db"),
+            analysis_time_ms=analysis_time_ms,
+        )
+    except (sqlite3.Error, OSError):
+        app.logger.exception("Classification history could not be saved")
+        return jsonify(error="The analysis could not be saved. Please try again later."), 503
     return jsonify(prediction=prediction)
+
+
+@app.get("/api/history")
+def history():
+    try:
+        limit = int(request.args.get("limit", "20"))
+        records = read_history(app.config["DATABASE_PATH"], limit)
+    except ValueError:
+        return jsonify(error="History limit must be a whole number between 1 and 100."), 400
+    except (sqlite3.Error, OSError):
+        app.logger.exception("Classification history could not be read")
+        return jsonify(error="Analysis history is unavailable. Please try again later."), 503
+    return jsonify(history=records)
 
 
 @app.errorhandler(RequestEntityTooLarge)

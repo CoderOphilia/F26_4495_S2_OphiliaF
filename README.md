@@ -114,4 +114,17 @@ compared on the same test IDs at clean, 40 dB, 30 dB, and 20 dB SNR.
 
 Full JSON results include confusion matrices, per-class scores, IDs, checksums,
 and settings. The noise comparison uses one seeded Gaussian realization per
-recording. SQLite history remains the November 17–23 milestone.
+recording.
+
+## Saved analysis history
+
+Successful classifications now save their predicted class, selected model,
+added noise setting, UTC timestamp, and analysis time to a local SQLite
+database. Open http://127.0.0.1:5000/api/history after analyzing a recording to
+inspect the newest 20 results. Use `/api/history?limit=5` for five records.
+
+The database at `Implementation/Data/analysis_history.sqlite3` is created on
+the first successful analysis and persists across server restarts. Its data
+and journal files are ignored by Git. Failed saves return a service error.
+See the classification workflow for timing and API details. The web history
+panel is the remaining part of the planned history milestone.

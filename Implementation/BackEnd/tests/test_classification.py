@@ -83,7 +83,12 @@ class ClassificationTests(unittest.TestCase):
 
     def setUp(self):
         self.previous_config = app.config.copy()
-        app.config.update(TESTING=True, MODEL_BUNDLE=self.models / "classifiers.joblib")
+        self.request_folder = tempfile.TemporaryDirectory(dir=self.temporary.name)
+        self.database_path = Path(self.request_folder.name) / "analysis_history.sqlite3"
+        app.config.update(
+            TESTING=True, MODEL_BUNDLE=self.models / "classifiers.joblib",
+            DATABASE_PATH=self.database_path,
+        )
         self.client = app.test_client()
         time, voltage = generate_signal("normal")
         self.payload = {
@@ -95,6 +100,7 @@ class ClassificationTests(unittest.TestCase):
     def tearDown(self):
         app.config.clear()
         app.config.update(self.previous_config)
+        self.request_folder.cleanup()
 
     def test_saved_models_match_training_only_scaling_and_partitions(self):
         with np.load(self.dataset / "signals.npz") as archive:
@@ -173,11 +179,54 @@ class ClassificationTests(unittest.TestCase):
         response = self.client.post("/api/classify", data="{", content_type="application/json")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(self.client.post("/api/classify", data="text").status_code, 400)
+        self.assertFalse(self.database_path.exists())
+
+    def test_successful_analyses_persist_in_history(self):
+        self.assertEqual(self.client.get("/api/history").json, {"history": []})
+        self.assertFalse(self.database_path.exists())
+        for model, snr in (("random_forest", None), ("svm", 40), ("svm", 20)):
+            response = self.client.post("/api/classify", json=dict(self.payload, model=model, added_noise_snr_db=snr))
+            self.assertEqual(response.status_code, 200)
+        # A new client reads data saved through earlier, closed connections.
+        response = app.test_client().get("/api/history?limit=2")
+        self.assertEqual(response.status_code, 200)
+        records = response.json["history"]
+        self.assertEqual(len(records), 2)
+        self.assertEqual([row["added_noise_snr_db"] for row in records], [20, 40])
+        self.assertGreater(records[0]["id"], records[1]["id"])
+        for row in records:
+            self.assertEqual(row["prediction"], "normal")
+            self.assertEqual(row["model"], "svm")
+            self.assertGreaterEqual(row["analysis_time_ms"], 0)
+            self.assertTrue(row["analyzed_at_utc"].endswith("+00:00"))
+            self.assertNotIn("voltage_relative", row)
+        all_records = self.client.get("/api/history").json["history"]
+        self.assertEqual(len(all_records), 3)
+        self.assertIsNone(all_records[-1]["added_noise_snr_db"])
+
+    def test_history_rejects_invalid_limits(self):
+        for limit in ("0", "101", "-1", "1.5", "text", "", "1;DROP TABLE classification_history"):
+            response = self.client.get("/api/history", query_string={"limit": limit})
+            self.assertEqual(response.status_code, 400)
+            self.assertIn("error", response.json)
+        self.assertFalse(self.database_path.exists())
+
+    def test_database_failures_return_service_errors(self):
+        app.config["DATABASE_PATH"] = Path(self.request_folder.name)
+        with self.assertLogs(app.logger, level="ERROR"):
+            response = self.client.post("/api/classify", json=self.payload)
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("error", response.json)
+        with self.assertLogs(app.logger, level="ERROR"):
+            response = self.client.get("/api/history")
+        self.assertEqual(response.status_code, 503)
+        self.assertFalse(self.database_path.exists())
 
     def test_missing_or_incompatible_models_return_service_error(self):
         app.config["MODEL_BUNDLE"] = self.models / "missing.joblib"
         with self.assertLogs(app.logger, level="ERROR"):
             self.assertEqual(self.client.post("/api/classify", json=self.payload).status_code, 503)
+        self.assertFalse(self.database_path.exists())
         incompatible = dict(self.bundle, feature_version=-1)
         path = Path(self.temporary.name) / "incompatible.joblib"
         joblib.dump(incompatible, path)

@@ -4,6 +4,9 @@ __pycache__/
 # Recreate local datasets using BackEnd/generate_dataset.py.
 Data/Synthetic*/
 
+# Analysis history belongs to the local app installation.
+Data/analysis_history.sqlite3*
+
 # Local document drafts and rendering work are not application source.
 tmp/
 output/
