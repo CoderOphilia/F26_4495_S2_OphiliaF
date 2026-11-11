@@ -1,0 +1,9 @@
+condition,model,recordings,accuracy,macro_f1
+clean,random_forest,150,1.0,1.0
+clean,svm,150,1.0,1.0
+40_db,random_forest,150,1.0,1.0
+40_db,svm,150,1.0,1.0
+30_db,random_forest,150,0.92,0.9197701149425288
+30_db,svm,150,1.0,1.0
+20_db,random_forest,150,0.7733333333333333,0.7285777126099706
+20_db,svm,150,0.74,0.6799695595649554

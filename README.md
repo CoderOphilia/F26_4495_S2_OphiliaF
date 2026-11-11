@@ -34,11 +34,13 @@ The Contact us bubble opens an email panel using the requested placeholder
 address `ophiliaproject@gmail.com`. Its email links open the user's email
 application; this is not a live-chat service and no email is sent automatically.
 
-The Flask server currently serves the front end. Model training and the
-`POST /api/classify` endpoint are not implemented yet, so Analyze Signal does not
-produce real ML predictions at this stage. Once connected, results display
-Normal signal or Problem detected followed by the disturbance name, without
-showing a probability score. Stop the server with Ctrl+C.
+The Flask server now implements `POST /api/classify` using the committed
+Random Forest and SVM models. Analyze Signal returns Normal signal or
+Problem detected followed by the predicted disturbance, without a probability
+score. Classification requires 1,200 samples at 6,000 Hz, a 0.2-second window
+around a nominal 60 Hz signal, and relative voltage referenced to nominal peak
+1.0. Other supported CSV sizes can still be previewed. Invalid or unsupported
+requests show an explanation. Stop the server with Ctrl+C.
 
 ## Run the normal signal generator
 
@@ -74,7 +76,9 @@ The default partitions contain 700 training, 150 validation, and 150 test
 recordings. Future noisy copies must retain their original recording's
 partition. Generated data stays local and is ignored by Git. These simplified
 mathematical examples are not hardware-validated or certified measurements.
-Feature extraction, trained classifiers, and the API remain the next stage.
+Time-domain/FFT features, both trained classifiers, and the Flask API are
+implemented. Reproducible clean and noise comparisons are committed alongside
+the models. These results apply to simplified synthetic signals.
 
 See [dataset format, parameter ranges, and evaluation rules](Implementation/Data/README.md).
 
@@ -83,3 +87,31 @@ Run the generation checks:
 ```bash
 python -m unittest discover -s Implementation/BackEnd/tests -v
 ```
+
+
+## Train models and reproduce noise comparisons
+
+The committed `Implementation/Models/classifiers.joblib` allows classification
+without retraining. To reproduce training after generating the dataset:
+
+```bash
+python Implementation/BackEnd/train_models.py --output Implementation/Models_retrained
+python Implementation/BackEnd/evaluate_noise.py --output Implementation/Models/noise_repeat
+```
+
+Existing nonempty output folders are preserved. The noise command above evaluates
+the committed models against the original generated dataset. For retrained
+models, also supply `--models Implementation/Models_retrained`.
+
+Training uses the saved 700/150/150 train/validation/test recordings. SVM scaling
+is fitted on training data only. Validation macro F1 selects model settings,
+and the test partition is evaluated after selection. Frozen models are then
+compared on the same test IDs at clean, 40 dB, 30 dB, and 20 dB SNR.
+
+- [Classification setup, features, API, and limits](Implementation/BackEnd/README.md)
+- [Clean baseline results](Implementation/Models/evaluation.md)
+- [Noise results and chart](Implementation/Models/noise_experiment/results.md)
+
+Full JSON results include confusion matrices, per-class scores, IDs, checksums,
+and settings. The noise comparison uses one seeded Gaussian realization per
+recording. SQLite history remains the November 17–23 milestone.

@@ -76,7 +76,7 @@
                     <input type="file" class="file-input" id="csvFile" accept=".csv" disabled aria-describedby="fileHelp fileName">
                     <label for="csvFile" class="upload-zone"><span>Choose a CSV recording<small>Click to browse your files</small></span></label>
                     <p id="fileName" class="file-name">No file selected.</p>
-                    <details class="format-guide" id="fileHelp"><summary>CSV format guide</summary><code>time_seconds,voltage_relative</code><p>Two numeric columns, evenly spaced timestamps in seconds, and up to 50,000 measurements. Maximum file size: 5 MB.</p></details>
+                    <details class="format-guide" id="fileHelp"><summary>CSV format guide</summary><code>time_seconds,voltage_relative</code><p>Two numeric columns with evenly spaced timestamps in seconds. Classification uses 1,200 measurements at 6,000 Hz, covering 0.2 seconds. Scale voltage relative to a nominal peak of 1.0. Other recordings with up to 50,000 measurements can be previewed. Maximum file size is 5 MB.</p></details>
                 </section>
 
                 <section class="controls-panel" aria-labelledby="controlsHeading">

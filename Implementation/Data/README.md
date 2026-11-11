@@ -98,9 +98,11 @@ and no background noise, transients, combined disturbances, or sensor effects.
 The records have not been validated against hardware recordings. High accuracy
 on this dataset would not establish real-world diagnostic reliability.
 
-Next: implement time-domain and FFT features, then train and evaluate Random
-Forest and SVM models using the saved partitions. The Flask classifier is not
-implemented by this dataset milestone.
+Time-domain and FFT features, trained Random Forest and SVM models, and the
+Flask classification endpoint are now implemented. See
+[the classification workflow](../BackEnd/README.md) for supported input,
+training commands, evaluation, and API details. Clean baseline results are
+saved in `Implementation/Models/evaluation.json` and `evaluation.md`.
 
 Run the generation checks from the repository root:
 

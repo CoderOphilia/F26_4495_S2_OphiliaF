@@ -617,13 +617,13 @@ analyzeButton.addEventListener("click", async () => {
             })
         });
 
+        const result = await response.json();
+
         if (!response.ok) {
             throw new Error(
-                "The signal-check service is unavailable. Please try again later."
+                result.error || "The signal-check service is unavailable. Please try again later."
             );
         }
-
-        const result = await response.json();
 
         const outcome = describePrediction(result.prediction);
         prediction.textContent = outcome;
@@ -632,9 +632,6 @@ analyzeButton.addEventListener("click", async () => {
         setStatus("Analysis completed.");
     } catch (error) {
         prediction.textContent = "Analysis unavailable";
-
-        resultMessage.textContent =
-            "No result was produced. Please try again when the signal-check service is available.";
 
         let message = error.message;
 
@@ -646,6 +643,7 @@ analyzeButton.addEventListener("click", async () => {
                 "Check that Flask is running.";
         }
 
+        resultMessage.textContent = message;
         setStatus(message, true);
     } finally {
         clearTimeout(timeout);

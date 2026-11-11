@@ -1,0 +1,864 @@
+{
+  "dataset_sha256": "602f8a82594f53c138745da6c4748f0e78fbefb3a997d6364394b7685f2dff74",
+  "model_bundle_sha256": "4bb39d8f11fa531d4d238b7c5736dfae2673fb36e6344f25c78f50b848652ade",
+  "seed": 2026,
+  "numpy_version": "2.2.3",
+  "test_signal_ids": [
+    "seed42_swell_00135",
+    "seed42_sag_00017",
+    "seed42_normal_00156",
+    "seed42_swell_00103",
+    "seed42_sag_00034",
+    "seed42_harmonic_distortion_00132",
+    "seed42_normal_00177",
+    "seed42_swell_00171",
+    "seed42_swell_00071",
+    "seed42_harmonic_distortion_00017",
+    "seed42_interruption_00121",
+    "seed42_interruption_00082",
+    "seed42_harmonic_distortion_00166",
+    "seed42_normal_00064",
+    "seed42_interruption_00036",
+    "seed42_sag_00147",
+    "seed42_harmonic_distortion_00175",
+    "seed42_normal_00060",
+    "seed42_normal_00162",
+    "seed42_interruption_00069",
+    "seed42_swell_00180",
+    "seed42_interruption_00042",
+    "seed42_harmonic_distortion_00160",
+    "seed42_harmonic_distortion_00095",
+    "seed42_interruption_00002",
+    "seed42_interruption_00097",
+    "seed42_harmonic_distortion_00054",
+    "seed42_sag_00032",
+    "seed42_interruption_00064",
+    "seed42_harmonic_distortion_00105",
+    "seed42_sag_00001",
+    "seed42_sag_00023",
+    "seed42_normal_00168",
+    "seed42_sag_00074",
+    "seed42_interruption_00039",
+    "seed42_normal_00088",
+    "seed42_interruption_00000",
+    "seed42_harmonic_distortion_00097",
+    "seed42_normal_00118",
+    "seed42_swell_00022",
+    "seed42_swell_00151",
+    "seed42_interruption_00187",
+    "seed42_swell_00074",
+    "seed42_sag_00079",
+    "seed42_sag_00003",
+    "seed42_interruption_00015",
+    "seed42_normal_00106",
+    "seed42_swell_00100",
+    "seed42_interruption_00031",
+    "seed42_sag_00062",
+    "seed42_sag_00026",
+    "seed42_harmonic_distortion_00057",
+    "seed42_sag_00096",
+    "seed42_sag_00020",
+    "seed42_normal_00056",
+    "seed42_harmonic_distortion_00045",
+    "seed42_harmonic_distortion_00131",
+    "seed42_interruption_00041",
+    "seed42_harmonic_distortion_00164",
+    "seed42_normal_00071",
+    "seed42_harmonic_distortion_00133",
+    "seed42_normal_00176",
+    "seed42_interruption_00177",
+    "seed42_harmonic_distortion_00130",
+    "seed42_normal_00121",
+    "seed42_normal_00160",
+    "seed42_swell_00160",
+    "seed42_normal_00193",
+    "seed42_swell_00065",
+    "seed42_sag_00172",
+    "seed42_interruption_00095",
+    "seed42_swell_00146",
+    "seed42_sag_00015",
+    "seed42_swell_00189",
+    "seed42_interruption_00035",
+    "seed42_swell_00019",
+    "seed42_harmonic_distortion_00126",
+    "seed42_sag_00174",
+    "seed42_swell_00027",
+    "seed42_swell_00130",
+    "seed42_swell_00010",
+    "seed42_sag_00162",
+    "seed42_sag_00179",
+    "seed42_sag_00004",
+    "seed42_interruption_00025",
+    "seed42_sag_00031",
+    "seed42_swell_00188",
+    "seed42_sag_00164",
+    "seed42_sag_00163",
+    "seed42_swell_00075",
+    "seed42_interruption_00133",
+    "seed42_harmonic_distortion_00111",
+    "seed42_sag_00036",
+    "seed42_swell_00086",
+    "seed42_normal_00138",
+    "seed42_interruption_00160",
+    "seed42_sag_00006",
+    "seed42_sag_00117",
+    "seed42_normal_00175",
+    "seed42_sag_00152",
+    "seed42_interruption_00152",
+    "seed42_swell_00117",
+    "seed42_interruption_00131",
+    "seed42_normal_00115",
+    "seed42_interruption_00027",
+    "seed42_sag_00071",
+    "seed42_interruption_00012",
+    "seed42_harmonic_distortion_00194",
+    "seed42_normal_00055",
+    "seed42_harmonic_distortion_00189",
+    "seed42_normal_00100",
+    "seed42_harmonic_distortion_00005",
+    "seed42_interruption_00173",
+    "seed42_normal_00191",
+    "seed42_swell_00066",
+    "seed42_harmonic_distortion_00159",
+    "seed42_sag_00037",
+    "seed42_harmonic_distortion_00178",
+    "seed42_harmonic_distortion_00093",
+    "seed42_harmonic_distortion_00162",
+    "seed42_interruption_00107",
+    "seed42_swell_00119",
+    "seed42_harmonic_distortion_00015",
+    "seed42_harmonic_distortion_00174",
+    "seed42_harmonic_distortion_00148",
+    "seed42_harmonic_distortion_00071",
+    "seed42_normal_00008",
+    "seed42_swell_00032",
+    "seed42_normal_00114",
+    "seed42_harmonic_distortion_00012",
+    "seed42_normal_00154",
+    "seed42_interruption_00109",
+    "seed42_harmonic_distortion_00172",
+    "seed42_normal_00029",
+    "seed42_sag_00194",
+    "seed42_swell_00062",
+    "seed42_interruption_00061",
+    "seed42_normal_00163",
+    "seed42_normal_00032",
+    "seed42_sag_00073",
+    "seed42_swell_00026",
+    "seed42_normal_00066",
+    "seed42_interruption_00135",
+    "seed42_normal_00179",
+    "seed42_interruption_00010",
+    "seed42_swell_00187",
+    "seed42_swell_00137",
+    "seed42_swell_00044",
+    "seed42_swell_00149",
+    "seed42_normal_00185"
+  ],
+  "class_order": [
+    "normal",
+    "sag",
+    "swell",
+    "interruption",
+    "harmonic_distortion"
+  ],
+  "method": "Frozen clean-trained models; same held-out IDs at every SNR. Per-record Gaussian noise is mean-centered and scaled to exact measured SNR. The same noise direction is reused across SNR levels. No fitting or model selection uses these results.",
+  "conditions": {
+    "clean": {
+      "random_forest": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "confusion_matrix": [
+          [
+            30,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          }
+        }
+      },
+      "svm": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "confusion_matrix": [
+          [
+            30,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          }
+        }
+      }
+    },
+    "40_db": {
+      "random_forest": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "confusion_matrix": [
+          [
+            30,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          }
+        }
+      },
+      "svm": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "confusion_matrix": [
+          [
+            30,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          }
+        }
+      }
+    },
+    "30_db": {
+      "random_forest": {
+        "accuracy": 0.92,
+        "macro_f1": 0.9197701149425288,
+        "confusion_matrix": [
+          [
+            20,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            0,
+            28,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 1.0,
+            "recall": 0.6666666666666666,
+            "f1-score": 0.8,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 1.0,
+            "recall": 0.9333333333333333,
+            "f1-score": 0.9655172413793104,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 0.7142857142857143,
+            "recall": 1.0,
+            "f1-score": 0.8333333333333334,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 0.92,
+          "macro avg": {
+            "precision": 0.9428571428571428,
+            "recall": 0.9199999999999999,
+            "f1-score": 0.9197701149425288,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 0.942857142857143,
+            "recall": 0.92,
+            "f1-score": 0.9197701149425287,
+            "support": 150.0
+          }
+        }
+      },
+      "svm": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "confusion_matrix": [
+          [
+            30,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            30,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          }
+        }
+      }
+    },
+    "20_db": {
+      "random_forest": {
+        "accuracy": 0.7733333333333333,
+        "macro_f1": 0.7285777126099706,
+        "confusion_matrix": [
+          [
+            2,
+            1,
+            27,
+            0,
+            0
+          ],
+          [
+            0,
+            24,
+            6,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 1.0,
+            "recall": 0.06666666666666667,
+            "f1-score": 0.125,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 0.96,
+            "recall": 0.8,
+            "f1-score": 0.8727272727272727,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 0.47619047619047616,
+            "recall": 1.0,
+            "f1-score": 0.6451612903225806,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 0.7733333333333333,
+          "macro avg": {
+            "precision": 0.8872380952380953,
+            "recall": 0.7733333333333333,
+            "f1-score": 0.7285777126099706,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 0.8872380952380953,
+            "recall": 0.7733333333333333,
+            "f1-score": 0.7285777126099706,
+            "support": 150.0
+          }
+        }
+      },
+      "svm": {
+        "accuracy": 0.74,
+        "macro_f1": 0.6799695595649554,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            26,
+            4,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            30,
+            0,
+            0
+          ],
+          [
+            0,
+            5,
+            0,
+            25,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            30
+          ]
+        ],
+        "classification_report": {
+          "normal": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 30.0
+          },
+          "sag": {
+            "precision": 0.8387096774193549,
+            "recall": 0.8666666666666667,
+            "f1-score": 0.8524590163934426,
+            "support": 30.0
+          },
+          "swell": {
+            "precision": 0.46875,
+            "recall": 1.0,
+            "f1-score": 0.6382978723404256,
+            "support": 30.0
+          },
+          "interruption": {
+            "precision": 1.0,
+            "recall": 0.8333333333333334,
+            "f1-score": 0.9090909090909091,
+            "support": 30.0
+          },
+          "harmonic_distortion": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 30.0
+          },
+          "accuracy": 0.74,
+          "macro avg": {
+            "precision": 0.661491935483871,
+            "recall": 0.74,
+            "f1-score": 0.6799695595649554,
+            "support": 150.0
+          },
+          "weighted avg": {
+            "precision": 0.661491935483871,
+            "recall": 0.74,
+            "f1-score": 0.6799695595649554,
+            "support": 150.0
+          }
+        }
+      }
+    }
+  }
+}
