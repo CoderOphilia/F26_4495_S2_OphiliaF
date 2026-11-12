@@ -20,6 +20,13 @@ const cleanedData = document.getElementById("cleanedData");
 const contactButton = document.getElementById("contactButton");
 const contactPanel = document.getElementById("contactPanel");
 const contactClose = document.getElementById("contactClose");
+const historyButton = document.getElementById("historyButton");
+const historyDialog = document.getElementById("historyDialog");
+const historyClose = document.getElementById("historyClose");
+const historyRefresh = document.getElementById("historyRefresh");
+const historyStatus = document.getElementById("historyStatus");
+const historyRows = document.getElementById("historyRows");
+const historyTableContainer = document.getElementById("historyTableContainer");
 const statusMessage = document.getElementById("status");
 
 const canvas = document.getElementById("waveform");
@@ -37,6 +44,7 @@ let previewSignal = [];
 let uploadedFileName = "";
 let estimatedSampleRate = 0;
 let busy = false;
+let historyRequest = null;
 
 // Slider positions: 0 = off, 1 = 40 dB, 2 = 30 dB, 3 = 20 dB.
 const noiseConditions = [null, 40, 30, 20];
@@ -630,6 +638,9 @@ analyzeButton.addEventListener("click", async () => {
         resultMessage.textContent = "";
 
         setStatus("Analysis completed.");
+        if (historyDialog.open) {
+            loadHistory();
+        }
     } catch (error) {
         prediction.textContent = "Analysis unavailable";
 
@@ -695,6 +706,88 @@ function describePrediction(label) {
     }
     return "Problem detected: " + problems[key];
 }
+
+// ---------- VIEW SAVED ANALYSES ----------
+async function loadHistory() {
+    historyRequest?.abort();
+    historyRows.replaceChildren();
+    historyTableContainer.hidden = true;
+
+    if (window.location.protocol === "file:") {
+        historyStatus.textContent = "Open the app through the local server to view saved analyses.";
+        return;
+    }
+
+    const controller = new AbortController();
+    historyRequest = controller;
+    historyRefresh.disabled = true;
+    historyStatus.textContent = "Loading saved analyses...";
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
+    try {
+        const response = await fetch("/api/history?limit=20", {
+            signal: controller.signal,
+            cache: "no-store"
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || "History is unavailable. Please try again.");
+        }
+        if (!Array.isArray(result.history)) {
+            throw new Error("The service returned an invalid history response.");
+        }
+        if (controller.signal.aborted) {
+            return;
+        }
+
+        const rows = result.history.map(record => {
+            const row = document.createElement("tr");
+            const values = [
+                new Date(record.analyzed_at_utc).toLocaleString(),
+                describePrediction(record.prediction),
+                record.model === "random_forest" ? "Random Forest" : "SVM",
+                record.added_noise_snr_db === null ? "Off" : `${record.added_noise_snr_db} dB`,
+                `${Number(record.analysis_time_ms).toFixed(1)} ms`
+            ];
+            for (const value of values) {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            }
+            return row;
+        });
+        historyRows.replaceChildren(...rows);
+        historyTableContainer.hidden = rows.length === 0;
+        historyStatus.textContent = rows.length === 0
+            ? "No saved analyses yet. Analyze a signal to add your first result."
+            : `Showing ${rows.length} saved ${rows.length === 1 ? "analysis" : "analyses"}. Most recent first.`;
+    } catch (error) {
+        if (historyRequest === controller) {
+            historyStatus.textContent = error.name === "AbortError"
+                ? "Loading history timed out. Select Refresh history to try again."
+                : "Could not load history. Check the local server and select Refresh history to try again.";
+        }
+    } finally {
+        clearTimeout(timeout);
+        if (historyRequest === controller) {
+            historyRequest = null;
+            historyRefresh.disabled = false;
+        }
+    }
+}
+
+historyButton.addEventListener("click", () => {
+    historyDialog.showModal();
+    loadHistory();
+});
+historyRefresh.addEventListener("click", loadHistory);
+historyClose.addEventListener("click", () => historyDialog.close());
+historyDialog.addEventListener("close", () => {
+    historyRequest?.abort();
+    historyRequest = null;
+    historyRefresh.disabled = false;
+    historyButton.focus();
+});
 
 // ---------- EMAIL CONTACT PANEL ----------
 function setContactOpen(open) {

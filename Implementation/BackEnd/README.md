@@ -113,8 +113,8 @@ requests, missing models, static files, and request limits.
 This is a research prototype evaluated on simplified generated single events.
 Its clean synthetic scores do not establish accuracy on hardware recordings,
 combined disturbances, other sampling conditions, or arbitrary voltage scales.
-SQLite persistence and history retrieval are implemented. A history panel in
-the web interface is the remaining part of that milestone.
+SQLite persistence, history retrieval, and the website history view are
+implemented.
 
 ## Saved analysis history
 
@@ -125,10 +125,16 @@ analysis time in milliseconds. Timing includes model loading, feature
 extraction, and prediction, and excludes saving the record. A cold first
 request can therefore take longer than later requests.
 
-After analyzing a signal, open http://127.0.0.1:5000/api/history to inspect
-the newest 20 results as JSON. Use `/api/history?limit=5` to retrieve five.
-Limits must be whole numbers between 1 and 100. An empty history returns
-`{"history":[]}`. The website history panel will use this endpoint.
+Select View history in the result card to see the newest 20 saved analyses.
+The dialog shows the result, model, added noise, local date/time, and analysis
+duration. Refresh history retrieves the latest records. Close or Escape returns
+to the workspace. On narrow screens, scroll across the table to see every
+column. Empty history and connection failures show a message with a next step.
+
+The dialog uses `GET /api/history?limit=20`. Open
+http://127.0.0.1:5000/api/history to inspect results as JSON or use
+`/api/history?limit=5` to retrieve five. Limits must be whole numbers between
+1 and 100. An empty history returns `{"history":[]}`.
 
 Records persist after the server restarts. Invalid inputs and failed model
 requests do not create history records. A database failure returns 503 so the
@@ -136,6 +142,16 @@ caller knows that the analysis was not saved. Saves use a transaction and a
 separate connection for each operation. Stored summaries do not include
 uploaded waveform arrays. The local database and its journal files are ignored
 by Git. Python includes SQLite support, so no additional package is needed.
+
+If Node.js is installed, run the history UI regression checks from the
+`Implementation` folder:
+
+```bash
+node --test FrontEnd/tests/history.test.cjs
+```
+
+These checks cover empty/populated history, failure and retry, stale requests
+after closing/reopening, timeout recovery, and direct HTML preview guidance.
 
 ## Noise robustness experiment
 

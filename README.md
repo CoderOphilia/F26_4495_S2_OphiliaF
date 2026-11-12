@@ -126,5 +126,10 @@ inspect the newest 20 results. Use `/api/history?limit=5` for five records.
 The database at `Implementation/Data/analysis_history.sqlite3` is created on
 the first successful analysis and persists across server restarts. Its data
 and journal files are ignored by Git. Failed saves return a service error.
-See the classification workflow for timing and API details. The web history
-panel is the remaining part of the planned history milestone.
+Select View history in the result card to see the newest 20 saved analyses
+in the app. The dialog shows the predicted result, model, noise setting, local
+date/time, and analysis duration. Refresh history reloads the latest records;
+Close or Escape returns to the workspace. Narrow screens support horizontal
+table scrolling. The dialog includes empty history and connection error states.
+
+See the classification workflow for timing, API details, and UI test commands.

@@ -95,7 +95,7 @@
             </aside>
 
             <section class="result-card" aria-labelledby="resultHeading">
-                <div class="result-intro"><p class="eyebrow">03 / SIGNAL CHECK</p><h2 id="resultHeading">Your signal<br> check result.</h2></div>
+                <div class="result-intro"><p class="eyebrow">03 / SIGNAL CHECK</p><h2 id="resultHeading">Your signal<br> check result.</h2><button type="button" id="historyButton" class="button button-history" aria-haspopup="dialog" aria-controls="historyDialog">View history</button></div>
                 <div class="result-panel" aria-live="polite"><span class="result-label">PREDICTED DISTURBANCE</span><p id="prediction">No result yet</p><p id="resultMessage">Confirm your data is cleaned, then upload a CSV.</p></div>
                 <div class="supported-classes"><p class="eyebrow">SUPPORTED CLASSES</p><div class="class-list"><span>Normal</span><span>Sag</span><span>Swell</span><span>Interruption</span><span>Harmonic distortion</span></div></div>
             </section>
@@ -115,6 +115,23 @@
         <p id="status" class="status-message" role="status" aria-live="polite" hidden></p>
 
     </div>
+
+    <dialog id="historyDialog" class="history-dialog" aria-labelledby="historyHeading" aria-describedby="historyDescription">
+        <div class="history-heading">
+            <div><p class="eyebrow">SAVED ANALYSES</p><h2 id="historyHeading">Your analysis history</h2></div>
+            <button type="button" id="historyClose" class="button button-download" autofocus>Close</button>
+        </div>
+        <p id="historyDescription">Your 20 most recent analyses. Dates and times use your browser's local timezone.</p>
+        <button type="button" id="historyRefresh" class="button button-download">Refresh history</button>
+        <p id="historyStatus" class="history-status" role="status" aria-live="polite"></p>
+        <div id="historyTableContainer" class="history-table-container" role="region" aria-label="Saved analysis results" tabindex="0" hidden>
+            <p class="history-scroll-hint">Swipe across the table to see every column.</p>
+            <table class="history-table">
+                <thead><tr><th scope="col">Recorded</th><th scope="col">Result</th><th scope="col">Model</th><th scope="col">Added noise</th><th scope="col">Analysis time</th></tr></thead>
+                <tbody id="historyRows"></tbody>
+            </table>
+        </div>
+    </dialog>
 
     <button type="button" id="contactButton" class="contact-button" aria-controls="contactPanel" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 4V6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 9h10M7 13h6" stroke="currentColor" stroke-width="1.8"/></svg>
