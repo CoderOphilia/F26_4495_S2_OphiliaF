@@ -131,5 +131,8 @@ in the app. The dialog shows the predicted result, model, noise setting, local
 date/time, and analysis duration. Refresh history reloads the latest records;
 Close or Escape returns to the workspace. Narrow screens support horizontal
 table scrolling. The dialog includes empty history and connection error states.
+Download shown history CSV exports the currently displayed records, up to 20,
+with UTC timestamps and full analysis durations to `analysis_history.csv`.
+A blank noise SNR cell means added noise was off.
 
 See the classification workflow for timing, API details, and UI test commands.

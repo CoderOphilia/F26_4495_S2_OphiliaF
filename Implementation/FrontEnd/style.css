@@ -1208,6 +1208,12 @@ input:disabled, select:disabled  {
     margin: 18px 0;
 }
 
+.history-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 .history-table-container {
     overflow-x: auto;
     border: 1px solid var(--blue-deep);

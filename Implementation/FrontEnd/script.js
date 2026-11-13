@@ -24,6 +24,7 @@ const historyButton = document.getElementById("historyButton");
 const historyDialog = document.getElementById("historyDialog");
 const historyClose = document.getElementById("historyClose");
 const historyRefresh = document.getElementById("historyRefresh");
+const historyDownload = document.getElementById("historyDownload");
 const historyStatus = document.getElementById("historyStatus");
 const historyRows = document.getElementById("historyRows");
 const historyTableContainer = document.getElementById("historyTableContainer");
@@ -45,6 +46,7 @@ let uploadedFileName = "";
 let estimatedSampleRate = 0;
 let busy = false;
 let historyRequest = null;
+let historyRecords = [];
 
 // Slider positions: 0 = off, 1 = 40 dB, 2 = 30 dB, 3 = 20 dB.
 const noiseConditions = [null, 40, 30, 20];
@@ -544,8 +546,12 @@ downloadButton.addEventListener("click", () => {
         rows.push(`${times[index]},${previewSignal[index]}`);
     }
 
-    const csvContent = rows.join("\n");
+    const baseName = uploadedFileName.replace(/\.csv$/i, "");
+    downloadCSV(rows.join("\n"), `${baseName}_preview.csv`);
+    setStatus("The displayed signal was downloaded as a CSV.");
+});
 
+function downloadCSV(csvContent, filename) {
     const blob = new Blob(
         [csvContent],
         { type: "text/csv;charset=utf-8" }
@@ -554,10 +560,8 @@ downloadButton.addEventListener("click", () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
 
-    const baseName = uploadedFileName.replace(/\.csv$/i, "");
-
     link.href = url;
-    link.download = `${baseName}_preview.csv`;
+    link.download = filename;
 
     document.body.appendChild(link);
     link.click();
@@ -566,9 +570,7 @@ downloadButton.addEventListener("click", () => {
     setTimeout(() => {
         URL.revokeObjectURL(url);
     }, 1000);
-
-    setStatus("The displayed signal was downloaded as a CSV.");
-});
+}
 
 
 // ---------- REQUEST A PREDICTION FROM FLASK ----------
@@ -712,6 +714,8 @@ async function loadHistory() {
     historyRequest?.abort();
     historyRows.replaceChildren();
     historyTableContainer.hidden = true;
+    historyRecords = [];
+    historyDownload.disabled = true;
 
     if (window.location.protocol === "file:") {
         historyStatus.textContent = "Open the app through the local server to view saved analyses.";
@@ -757,6 +761,8 @@ async function loadHistory() {
             return row;
         });
         historyRows.replaceChildren(...rows);
+        historyRecords = result.history;
+        historyDownload.disabled = rows.length === 0;
         historyTableContainer.hidden = rows.length === 0;
         historyStatus.textContent = rows.length === 0
             ? "No saved analyses yet. Analyze a signal to add your first result."
@@ -781,10 +787,27 @@ historyButton.addEventListener("click", () => {
     loadHistory();
 });
 historyRefresh.addEventListener("click", loadHistory);
+historyDownload.addEventListener("click", () => {
+    if (historyRecords.length === 0) {
+        return;
+    }
+    const fields = [
+        "id", "analyzed_at_utc", "prediction", "model",
+        "added_noise_snr_db", "analysis_time_ms"
+    ];
+    const rows = historyRecords.map(record => fields.map(field => {
+        const value = String(record[field] ?? "");
+        return `"${value.replace(/"/g, '""')}"`;
+    }).join(","));
+    downloadCSV([fields.join(","), ...rows].join("\r\n"), "analysis_history.csv");
+    historyStatus.textContent = "History CSV download started.";
+});
 historyClose.addEventListener("click", () => historyDialog.close());
 historyDialog.addEventListener("close", () => {
     historyRequest?.abort();
     historyRequest = null;
+    historyRecords = [];
+    historyDownload.disabled = true;
     historyRefresh.disabled = false;
     historyButton.focus();
 });

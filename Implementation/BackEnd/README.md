@@ -131,6 +131,13 @@ duration. Refresh history retrieves the latest records. Close or Escape returns
 to the workspace. On narrow screens, scroll across the table to see every
 column. Empty history and connection failures show a message with a next step.
 
+Download shown history CSV exports the records currently displayed, up to 20,
+to `analysis_history.csv`. It includes record IDs, UTC timestamps, predicted
+classes, model keys, noise SNR, and full analysis durations in milliseconds.
+A blank SNR cell means added noise was off. The button is enabled after saved
+results load and is disabled during refresh or when history is empty or
+unavailable. Refresh first to include newly saved analyses.
+
 The dialog uses `GET /api/history?limit=20`. Open
 http://127.0.0.1:5000/api/history to inspect results as JSON or use
 `/api/history?limit=5` to retrieve five. Limits must be whole numbers between
@@ -151,7 +158,8 @@ node --test FrontEnd/tests/history.test.cjs
 ```
 
 These checks cover empty/populated history, failure and retry, stale requests
-after closing/reopening, timeout recovery, and direct HTML preview guidance.
+after closing/reopening, timeout recovery, CSV export and refresh behavior,
+the waveform CSV format, and direct HTML preview guidance.
 
 ## Noise robustness experiment
 

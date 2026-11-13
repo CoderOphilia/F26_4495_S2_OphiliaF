@@ -122,7 +122,10 @@
             <button type="button" id="historyClose" class="button button-download" autofocus>Close</button>
         </div>
         <p id="historyDescription">Your 20 most recent analyses. Dates and times use your browser's local timezone.</p>
-        <button type="button" id="historyRefresh" class="button button-download">Refresh history</button>
+        <div class="history-actions">
+            <button type="button" id="historyRefresh" class="button button-download">Refresh history</button>
+            <button type="button" id="historyDownload" class="button button-download" disabled>Download shown history CSV</button>
+        </div>
         <p id="historyStatus" class="history-status" role="status" aria-live="polite"></p>
         <div id="historyTableContainer" class="history-table-container" role="region" aria-label="Saved analysis results" tabindex="0" hidden>
             <p class="history-scroll-hint">Swipe across the table to see every column.</p>
