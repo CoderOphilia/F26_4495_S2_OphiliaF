@@ -204,3 +204,73 @@ test("the shared download helper preserves the waveform CSV format and filename"
     assert.equal(app.downloads[0].filename, "sample_preview.csv");
     assert.equal(await app.downloads[0].blob.text(), "time_seconds,voltage_relative\n0,0\n0.01,-0.5");
 });
+
+function recordingCSV(count, rate, jitter = 0) {
+    const rows = ["time_seconds,voltage_relative"];
+    for (let index = 0; index < count; index++) {
+        const time = index / rate + (index % 2) * jitter / rate;
+        rows.push(`${time},${Math.sin(2 * Math.PI * 60 * time)}`);
+    }
+    return rows.join("\n");
+}
+
+async function uploadRecording(app, csv) {
+    app.element("cleanedData").checked = true;
+    app.element("cleanedData").handlers.change();
+    app.element("csvFile").files = [{
+        name: "recording.csv", size: Buffer.byteLength(csv), text: async () => csv
+    }];
+    await app.element("csvFile").handlers.change();
+}
+
+test("an unsupported sample count remains available for preview and download", async () => {
+    let requests = 0;
+    const app = loadApp(async () => { requests++; });
+    await uploadRecording(app, recordingCSV(600, 6000));
+    assert.equal(app.element("sampleCount").textContent, "600");
+    assert.equal(app.element("chartEmpty").hidden, true);
+    assert.equal(app.element("downloadButton").disabled, false);
+    assert.equal(app.element("analyzeButton").disabled, true);
+    assert.match(app.element("resultMessage").textContent, /exactly 1,200/);
+    app.element("noiseSlider").value = "1";
+    app.element("noiseSlider").handlers.input();
+    app.element("modelSelect").handlers.change();
+    assert.match(app.element("status").textContent, /exactly 1,200/);
+    await app.element("analyzeButton").handlers.click();
+    assert.equal(requests, 0);
+    app.element("downloadButton").handlers.click();
+    assert.equal((await app.downloads[0].blob.text()).split("\n").length, 601);
+});
+
+test("unsupported sampling rates and intervals are caught before classification", async () => {
+    const app = loadApp(() => { throw new Error("Unexpected classification request"); });
+    for (const csv of [recordingCSV(1200, 5000), recordingCSV(1200, 6004, 0.0008)]) {
+        await uploadRecording(app, csv);
+        assert.equal(app.element("sampleCount").textContent, "1,200");
+        assert.equal(app.element("analyzeButton").disabled, true);
+        assert.equal(app.element("downloadButton").disabled, false);
+        assert.match(app.element("resultMessage").textContent, /6,000 Hz/);
+        await app.element("analyzeButton").handlers.click();
+    }
+});
+
+test("uploading a supported recording restores analysis and submits the waveform", async () => {
+    const requests = [];
+    const app = loadApp(async (url, options) => {
+        requests.push({ url, payload: JSON.parse(options.body) });
+        return { ok: true, json: async () => ({ prediction: "normal" }) };
+    });
+    await uploadRecording(app, recordingCSV(600, 6000));
+    assert.equal(app.element("analyzeButton").disabled, true);
+    const csv = fs.readFileSync(path.join(__dirname, "..", "..", "normal_signal.csv"), "utf8");
+    await uploadRecording(app, csv);
+    assert.equal(app.element("analyzeButton").disabled, false);
+    assert.match(app.element("resultMessage").textContent, /Select Analyze Signal/);
+    await app.element("analyzeButton").handlers.click();
+    assert.equal(requests.length, 1);
+    assert.equal(requests[0].url, "/api/classify");
+    assert.equal(requests[0].payload.time_seconds.length, 1200);
+    assert.equal(requests[0].payload.voltage_relative.length, 1200);
+    assert.equal(app.element("prediction").textContent, "Normal signal");
+    assert.equal(app.element("analyzeButton").disabled, false);
+});

@@ -66,8 +66,23 @@ function resetResult() {
     resultMessage.textContent = !cleanedData.checked
         ? "Confirm your data is cleaned, then upload a CSV."
         : times.length > 0
-            ? "Select Analyze Signal to check this recording."
+            ? classificationTimingIssue() || "Select Analyze Signal to check this recording."
             : "Upload a cleaned CSV recording to begin.";
+}
+
+function classificationTimingIssue() {
+    if (times.length !== 1200) {
+        return "Classification needs exactly 1,200 measurements. Preview and CSV download are available.";
+    }
+    const expectedStep = 1 / 6000;
+    const stepTolerance = expectedStep * 0.001 + 1e-10;
+    const hasUnsupportedStep = times.slice(1).some((time, index) => {
+        return Math.abs(time - times[index] - expectedStep) > stepTolerance;
+    });
+    if (Math.abs(estimatedSampleRate - 6000) > 6 + 1e-8 || hasUnsupportedStep) {
+        return "Classification needs evenly spaced measurements at 6,000 Hz. Preview and CSV download are available.";
+    }
+    return "";
 }
 
 function updateControls() {
@@ -78,7 +93,7 @@ function updateControls() {
     modelSelect.disabled = busy || !cleanedData.checked;
 
     noiseSlider.disabled = busy || !hasSignal;
-    analyzeButton.disabled = busy || !hasSignal;
+    analyzeButton.disabled = busy || !hasSignal || Boolean(classificationTimingIssue());
     downloadButton.disabled = busy || !hasSignal;
 }
 
@@ -357,9 +372,9 @@ noiseSlider.addEventListener("input", () => {
     const noiseIsOff = Number(noiseSlider.value) === 0;
 
     setStatus(
-        noiseIsOff
+        classificationTimingIssue() || (noiseIsOff
             ? "Showing the uploaded recording without added noise."
-            : "Preview updated with a new random noise sample. Analyze again."
+            : "Preview updated with a new random noise sample. Analyze again.")
     );
 });
 
@@ -368,7 +383,7 @@ modelSelect.addEventListener("change", () => {
 
     if (times.length > 0) {
         setStatus(
-            "Model selection changed. Analyze again to get a prediction."
+            classificationTimingIssue() || "Model selection changed. Analyze again to get a prediction."
         );
     }
 });
@@ -581,6 +596,12 @@ analyzeButton.addEventListener("click", async () => {
     }
 
     resetResult();
+    const timingIssue = classificationTimingIssue();
+    if (timingIssue) {
+        setStatus(timingIssue, true);
+        updateControls();
+        return;
+    }
 
     // Local HTML preview supports upload, plotting, noise, and download.
     // Classification requires the page to be served through Flask.

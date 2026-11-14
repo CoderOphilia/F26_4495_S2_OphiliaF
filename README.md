@@ -39,8 +39,10 @@ Random Forest and SVM models. Analyze Signal returns Normal signal or
 Problem detected followed by the predicted disturbance, without a probability
 score. Classification requires 1,200 samples at 6,000 Hz, a 0.2-second window
 around a nominal 60 Hz signal, and relative voltage referenced to nominal peak
-1.0. Other supported CSV sizes can still be previewed. Invalid or unsupported
-requests show an explanation. Stop the server with Ctrl+C.
+1.0. The browser explains unsupported sample counts or timestamp intervals
+before analysis and enables Analyze Signal when the timing requirements are
+met. Other supported CSV sizes and rates can still be previewed and downloaded.
+The server independently checks every request. Stop the server with Ctrl+C.
 
 ## Run the normal signal generator
 

@@ -39,6 +39,12 @@ it does not establish that data is cleaned. Preview and download still support
 other uniform recordings with 4 to 50,000 samples. Unsupported classification
 requests return an explanation.
 
+The browser checks the recording length, estimated sample rate, and individual
+timestamp intervals before enabling Analyze Signal. A recording with
+unsupported timing can still be plotted and downloaded. The result panel
+explains the timing requirements, and the server independently validates
+every classification request.
+
 ## Features and training
 
 `feature_extraction.py` produces a fixed list of ten waveform measurements.
@@ -150,7 +156,7 @@ separate connection for each operation. Stored summaries do not include
 uploaded waveform arrays. The local database and its journal files are ignored
 by Git. Python includes SQLite support, so no additional package is needed.
 
-If Node.js is installed, run the history UI regression checks from the
+If Node.js is installed, run the browser regression checks from the
 `Implementation` folder:
 
 ```bash
@@ -159,7 +165,8 @@ node --test FrontEnd/tests/history.test.cjs
 
 These checks cover empty/populated history, failure and retry, stale requests
 after closing/reopening, timeout recovery, CSV export and refresh behavior,
-the waveform CSV format, and direct HTML preview guidance.
+the waveform CSV format, classification timing requirements, and direct HTML
+preview guidance.
 
 ## Noise robustness experiment
 
