@@ -3,6 +3,7 @@
 import copy
 import hashlib
 import json
+import runpy
 from pathlib import Path
 import sys
 import tempfile
@@ -243,6 +244,32 @@ class ClassificationTests(unittest.TestCase):
         response = self.client.post("/api/classify", json=self.payload)
         self.assertEqual(response.status_code, 413)
         self.assertIn("error", response.json)
+
+    def test_frontend_launcher_serves_the_complete_application(self):
+        launcher = Path(__file__).resolve().parents[2] / "FrontEnd" / "app.py"
+        frontend_app = runpy.run_path(str(launcher))["app"]
+        frontend_app.config.update(self.previous_config)
+        frontend_app.config.update(
+            TESTING=True, MODEL_BUNDLE=self.models / "classifiers.joblib",
+            DATABASE_PATH=self.database_path,
+        )
+        client = frontend_app.test_client()
+        with client.get("/") as response:
+            self.assertEqual(response.status_code, 200)
+        self.assertEqual(client.get("/api/history").json, {"history": []})
+        self.assertEqual(client.post("/api/classify", json=self.payload).json, {"prediction": "normal"})
+        self.assertEqual(len(client.get("/api/history").json["history"]), 1)
+
+    def test_committed_models_work_without_retraining(self):
+        app.config["MODEL_BUNDLE"] = Path(__file__).resolve().parents[2] / "Models" / "classifiers.joblib"
+        for label in SIGNAL_TYPES:
+            time, voltage = generate_signal(label)
+            for model in ("random_forest", "svm"):
+                with self.subTest(label=label, model=model):
+                    payload = dict(self.payload, time_seconds=time.tolist(), voltage_relative=voltage.tolist(), model=model)
+                    response = self.client.post("/api/classify", json=payload)
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response.json, {"prediction": label})
 
 
 if __name__ == "__main__":

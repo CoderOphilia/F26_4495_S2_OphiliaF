@@ -274,3 +274,68 @@ test("uploading a supported recording restores analysis and submits the waveform
     assert.equal(app.element("prediction").textContent, "Normal signal");
     assert.equal(app.element("analyzeButton").disabled, false);
 });
+
+test("flat and out-of-range voltage stays previewable without sending analysis requests", async () => {
+    let requests = 0;
+    const app = loadApp(async () => { requests++; });
+    for (const value of [0, 1, 6, -6]) {
+        const csv = recordingCSV(1200, 6000).trim().split("\n").map((line, index) => {
+            return index === 0 ? line : `${line.split(",")[0]},${value}`;
+        }).join("\n");
+        await uploadRecording(app, csv);
+        assert.equal(app.element("analyzeButton").disabled, true);
+        assert.equal(app.element("downloadButton").disabled, false);
+        assert.equal(app.element("chartEmpty").hidden, true);
+        assert.match(app.element("resultMessage").textContent, Math.abs(value) > 5 ? /nominal peak 1.0/ : /flat recording/);
+        await app.element("analyzeButton").handlers.click();
+        app.element("downloadButton").handlers.click();
+        assert.match(await app.downloads.at(-1).blob.text(), /time_seconds,voltage_relative/);
+    }
+    assert.equal(requests, 0);
+    await uploadRecording(app, recordingCSV(1200, 6000));
+    assert.equal(app.element("analyzeButton").disabled, false);
+});
+
+test("changing noise reevaluates the displayed voltage and restores analysis when switched off", async () => {
+    const app = loadApp(() => { throw new Error("Unexpected classification request"); });
+    await uploadRecording(app, recordingCSV(1200, 6000));
+    vm.runInContext("randomGaussian = () => 100", app.context);
+    app.element("noiseSlider").value = "3";
+    app.element("noiseSlider").handlers.input();
+    assert.equal(app.element("analyzeButton").disabled, true);
+    assert.match(app.element("resultMessage").textContent, /nominal peak 1.0/);
+    await app.element("analyzeButton").handlers.click();
+    app.element("noiseSlider").value = "0";
+    app.element("noiseSlider").handlers.input();
+    assert.equal(app.element("analyzeButton").disabled, false);
+    assert.match(app.element("resultMessage").textContent, /Select Analyze Signal/);
+});
+
+test("an HTML response explains how to start the API and allows retry", async () => {
+    let failing = true;
+    const app = loadApp(async () => {
+        if (failing) return { ok: false, json: async () => { throw new SyntaxError("Unexpected token <"); } };
+        return { ok: true, json: async () => ({ prediction: "normal" }) };
+    });
+    await uploadRecording(app, recordingCSV(1200, 6000));
+    await app.element("analyzeButton").handlers.click();
+    assert.equal(app.element("prediction").textContent, "Analysis unavailable");
+    assert.match(app.element("resultMessage").textContent, /Start BackEnd\/app.py/);
+    assert.equal(app.element("analyzeButton").disabled, false);
+    assert.equal(app.timers.size, 0);
+    failing = false;
+    await app.element("analyzeButton").handlers.click();
+    assert.equal(app.element("prediction").textContent, "Normal signal");
+});
+
+test("invalid responses and service errors show a useful message and restore controls", async () => {
+    for (const result of [null, [], "text", { error: "The analysis could not be saved." }]) {
+        const app = loadApp(async () => ({ ok: !result?.error, json: async () => result }));
+        await uploadRecording(app, recordingCSV(1200, 6000));
+        await app.element("analyzeButton").handlers.click();
+        assert.equal(app.element("prediction").textContent, "Analysis unavailable");
+        assert.match(app.element("resultMessage").textContent, result?.error ? /could not be saved/ : /valid analysis response/);
+        assert.equal(app.element("analyzeButton").disabled, false);
+        assert.equal(app.timers.size, 0);
+    }
+});

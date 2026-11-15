@@ -91,7 +91,7 @@ any saved results. Imported `RawData` files are not used: their stated 50 Hz,
 5 kHz, one-cycle format differs from this generator and their provenance still
 needs verification.
 
-## Limitations and next milestone
+## Limitations and implemented workflow
 
 The waveforms contain simplified single events, abrupt amplitude transitions,
 and no background noise, transients, combined disturbances, or sensor effects.

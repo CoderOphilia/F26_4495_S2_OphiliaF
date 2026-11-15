@@ -66,11 +66,11 @@ function resetResult() {
     resultMessage.textContent = !cleanedData.checked
         ? "Confirm your data is cleaned, then upload a CSV."
         : times.length > 0
-            ? classificationTimingIssue() || "Select Analyze Signal to check this recording."
+            ? classificationIssue() || "Select Analyze Signal to check this recording."
             : "Upload a cleaned CSV recording to begin.";
 }
 
-function classificationTimingIssue() {
+function classificationIssue() {
     if (times.length !== 1200) {
         return "Classification needs exactly 1,200 measurements. Preview and CSV download are available.";
     }
@@ -81,6 +81,12 @@ function classificationTimingIssue() {
     });
     if (Math.abs(estimatedSampleRate - 6000) > 6 + 1e-8 || hasUnsupportedStep) {
         return "Classification needs evenly spaced measurements at 6,000 Hz. Preview and CSV download are available.";
+    }
+    if (previewSignal.some(value => !Number.isFinite(value) || Math.abs(value) > 5)) {
+        return "Classification needs relative voltage with nominal peak 1.0 and magnitudes no greater than 5. Preview and CSV download are available.";
+    }
+    if (previewSignal.every(value => value === previewSignal[0])) {
+        return "A flat recording cannot be classified. Include the waveform before and after an interruption. Preview and CSV download are available.";
     }
     return "";
 }
@@ -93,7 +99,7 @@ function updateControls() {
     modelSelect.disabled = busy || !cleanedData.checked;
 
     noiseSlider.disabled = busy || !hasSignal;
-    analyzeButton.disabled = busy || !hasSignal || Boolean(classificationTimingIssue());
+    analyzeButton.disabled = busy || !hasSignal || Boolean(classificationIssue());
     downloadButton.disabled = busy || !hasSignal;
 }
 
@@ -360,6 +366,7 @@ function updatePreview() {
 
     resetResult();
     drawWaveform();
+    updateControls();
 }
 
 noiseSlider.addEventListener("input", () => {
@@ -372,7 +379,7 @@ noiseSlider.addEventListener("input", () => {
     const noiseIsOff = Number(noiseSlider.value) === 0;
 
     setStatus(
-        classificationTimingIssue() || (noiseIsOff
+        classificationIssue() || (noiseIsOff
             ? "Showing the uploaded recording without added noise."
             : "Preview updated with a new random noise sample. Analyze again.")
     );
@@ -383,7 +390,7 @@ modelSelect.addEventListener("change", () => {
 
     if (times.length > 0) {
         setStatus(
-            classificationTimingIssue() || "Model selection changed. Analyze again to get a prediction."
+            classificationIssue() || "Model selection changed. Analyze again to get a prediction."
         );
     }
 });
@@ -596,9 +603,9 @@ analyzeButton.addEventListener("click", async () => {
     }
 
     resetResult();
-    const timingIssue = classificationTimingIssue();
-    if (timingIssue) {
-        setStatus(timingIssue, true);
+    const recordingIssue = classificationIssue();
+    if (recordingIssue) {
+        setStatus(recordingIssue, true);
         updateControls();
         return;
     }
@@ -648,7 +655,16 @@ analyzeButton.addEventListener("click", async () => {
             })
         });
 
-        const result = await response.json();
+        let result;
+        try {
+            result = await response.json();
+        } catch (error) {
+            if (error.name === "AbortError") throw error;
+            throw new Error("The server did not return an analysis response. Start BackEnd/app.py and open http://127.0.0.1:5000.");
+        }
+        if (!result || typeof result !== "object" || Array.isArray(result)) {
+            throw new Error("The service did not return a valid analysis response. Please try again later.");
+        }
 
         if (!response.ok) {
             throw new Error(

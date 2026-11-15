@@ -7,6 +7,10 @@ python -m pip install -r BackEnd/requirements.txt
 python BackEnd/app.py
 ```
 
+`python FrontEnd/app.py` is also supported as a compatibility launcher. Both
+commands start the complete application with classification and saved history.
+Opening `FrontEnd/index.html` directly only provides the local waveform preview.
+
 Open http://127.0.0.1:5000. The committed model bundle makes classification
 available immediately. Confirm cleaned data, upload `normal_signal.csv`,
 select Random Forest or SVM, and select Analyze Signal. The result is
@@ -39,11 +43,11 @@ it does not establish that data is cleaned. Preview and download still support
 other uniform recordings with 4 to 50,000 samples. Unsupported classification
 requests return an explanation.
 
-The browser checks the recording length, estimated sample rate, and individual
-timestamp intervals before enabling Analyze Signal. A recording with
-unsupported timing can still be plotted and downloaded. The result panel
-explains the timing requirements, and the server independently validates
-every classification request.
+The browser checks the recording length, estimated sample rate, individual
+timestamp intervals, and displayed voltage before enabling Analyze Signal.
+Flat recordings and magnitudes above 5 remain available for preview and CSV
+download, with guidance in the result panel. Noise changes recheck the displayed
+samples. The server independently validates every classification request.
 
 ## Features and training
 
@@ -166,7 +170,9 @@ node --test FrontEnd/tests/history.test.cjs
 These checks cover empty/populated history, failure and retry, stale requests
 after closing/reopening, timeout recovery, CSV export and refresh behavior,
 the waveform CSV format, classification timing requirements, and direct HTML
-preview guidance.
+preview guidance. They also cover flat and out-of-range signals, noise changes,
+and recovery when a preview server returns HTML instead of API JSON. Backend
+tests verify both launchers and the committed models without retraining.
 
 ## Noise robustness experiment
 

@@ -10,7 +10,7 @@ amplitude = 1.0 #To control the wave height
 number_of_samples = int(sample_rate_hz * duration_seconds)
 time = np.arange(number_of_samples) / sample_rate_hz #This is to know at what time each measurement is taken
 voltage = amplitude * np.sin(2 * np.pi * frequency_hz * time) #This is the formula for a sine wave.creates the wave’s value at every timestamp stored in time
-#v(t) = A*sin(2*pi*f*t + phi)
+# v(t) = A*sin(2*pi*f*t + phi)
 
 # plt.plot(time, voltage)
 # plt.xlabel('Time (s)')
@@ -73,15 +73,15 @@ third_harmonic = 0.2 * amplitude * np.sin(2 * np.pi * 3 * frequency_hz * time) #
 fifth_harmonic = 0.1 * amplitude * np.sin(2 * np.pi * 5 * frequency_hz * time) #Fifth harmonic is 5 times the fundamental frequency
 harmonic_voltage = voltage + third_harmonic + fifth_harmonic
 
-# plt.plot(time, voltage, label='Normal Voltage', linestyle='--')
-# plt.plot(time, harmonic_voltage, label='Harmonic Distortion', color='orange')
-# plt.xlabel('Time (s)')
-# plt.ylabel('Relative Amplitude')
-# plt.title('Normal Signal compared with Harmonic Distortion - 60Hz')
-# plt.ylim(-1.7,1.7) #fixes the vertical scale so the graphs are easier to compare.
-# plt.xlim(0,0.05) #displays only the first 0.05 seconds, making the shape easier to examine. It doesn’t remove any data.
-# plt.legend()
-# plt.show()  
+plt.plot(time, voltage, label='Normal Voltage', linestyle='--')
+plt.plot(time, harmonic_voltage, label='Harmonic Distortion', color='orange')
+plt.xlabel('Time (s)')
+plt.ylabel('Relative Amplitude')
+plt.title('Normal Signal compared with Harmonic Distortion - 60Hz')
+plt.ylim(-1.7,1.7) #fixes the vertical scale so the graphs are easier to compare.
+plt.xlim(0,0.05) #displays only the first 0.05 seconds, making the shape easier to examine. It doesn’t remove any data.
+plt.legend()
+plt.show()  
 
 #-----------SAVING THE SIGNAL AS A CSV FILE------------------
 #This is to save the generated signals as a CSV file for further analysis or use in other

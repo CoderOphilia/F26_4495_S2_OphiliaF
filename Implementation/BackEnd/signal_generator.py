@@ -1,6 +1,4 @@
 """Generate simplified, single-disturbance voltage recordings.
-
-Developed with AI assistance for the CSIS 4495 power quality project.
 Amplitude is relative, and phase is measured in radians.
 """
 

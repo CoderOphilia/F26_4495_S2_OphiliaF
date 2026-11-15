@@ -1,6 +1,5 @@
 """Build a reproducible, labelled dataset for the power quality project.
-
-Developed with AI assistance for CSIS 4495. Uses synthetic mathematical
+Uses synthetic mathematical
 signals only; it does not import the unverified RawData reference files.
 """
 
