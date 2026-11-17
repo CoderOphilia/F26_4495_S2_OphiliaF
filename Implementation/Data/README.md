@@ -1,8 +1,8 @@
 # Synthetic dataset
 
 This milestone implements reproducible examples for normal, sag, swell,
-interruption, and harmonic distortion signals. Developed with AI assistance
-for the CSIS 4495 project. These are educational mathematical models, not
+interruption, and harmonic distortion signals for the CSIS 4495 project.
+These are educational mathematical models, not
 certified measurements or proof of accuracy on real devices.
 
 From the repository root, run:
