@@ -183,7 +183,7 @@ class ClassificationTests(unittest.TestCase):
         self.assertFalse(self.database_path.exists())
 
     def test_successful_analyses_persist_in_history(self):
-        self.assertEqual(self.client.get("/api/history").json, {"history": []})
+        self.assertEqual(self.client.get("/api/history").json, {"history": [], "has_more": False, "next_before_id": None})
         self.assertFalse(self.database_path.exists())
         for model, snr in (("random_forest", None), ("svm", 40), ("svm", 20)):
             response = self.client.post("/api/classify", json=dict(self.payload, model=model, added_noise_snr_db=snr))
@@ -192,6 +192,13 @@ class ClassificationTests(unittest.TestCase):
         response = app.test_client().get("/api/history?limit=2")
         self.assertEqual(response.status_code, 200)
         records = response.json["history"]
+        self.assertTrue(response.json["has_more"])
+        next_page = self.client.get("/api/history", query_string={
+            "limit": 2, "before_id": response.json["next_before_id"],
+        })
+        self.assertEqual(len(next_page.json["history"]), 1)
+        self.assertFalse(next_page.json["has_more"])
+        self.assertIsNone(next_page.json["next_before_id"])
         self.assertEqual(len(records), 2)
         self.assertEqual([row["added_noise_snr_db"] for row in records], [20, 40])
         self.assertGreater(records[0]["id"], records[1]["id"])
@@ -211,6 +218,10 @@ class ClassificationTests(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn("error", response.json)
         self.assertFalse(self.database_path.exists())
+        for cursor in ("", "0", "-1", "1.5", "text", str(2 ** 63), "1;DROP TABLE classification_history"):
+            response = self.client.get("/api/history", query_string={"before_id": cursor})
+            self.assertEqual(response.status_code, 400)
+            self.assertIn("error", response.json)
 
     def test_database_failures_return_service_errors(self):
         app.config["DATABASE_PATH"] = Path(self.request_folder.name)
@@ -256,7 +267,7 @@ class ClassificationTests(unittest.TestCase):
         client = frontend_app.test_client()
         with client.get("/") as response:
             self.assertEqual(response.status_code, 200)
-        self.assertEqual(client.get("/api/history").json, {"history": []})
+        self.assertEqual(client.get("/api/history").json, {"history": [], "has_more": False, "next_before_id": None})
         self.assertEqual(client.post("/api/classify", json=self.payload).json, {"prediction": "normal"})
         self.assertEqual(len(client.get("/api/history").json["history"]), 1)
 

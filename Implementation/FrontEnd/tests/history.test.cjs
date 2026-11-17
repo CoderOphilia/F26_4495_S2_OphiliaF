@@ -62,9 +62,31 @@ function loadApp(fetch, protocol = "http:") {
     return { context, element, timers, downloads, blobs };
 }
 
-function response(history) {
-    return { ok: true, json: async () => ({ history }) };
+function response(history, pagination = {}) {
+    return { ok: true, json: async () => ({ history, ...pagination }) };
 }
+
+test("older pages use the server cursor and refresh returns to the newest results", async () => {
+    const requests = [];
+    const app = loadApp(async url => {
+        requests.push(url);
+        if (url.includes("before_id=21")) return response([record({id:20})], {has_more:false,next_before_id:null});
+        return response([record({id:21})], {has_more:true,next_before_id:"21"});
+    });
+    await app.context.loadHistory();
+    assert.equal(app.element("historyOlder").disabled, false);
+    await app.element("historyOlder").handlers.click();
+    assert.equal(requests[1], "/api/history?limit=20&before_id=21");
+    assert.equal(app.element("historyOlder").disabled, true);
+    assert.match(app.element("historyStatus").textContent, /older saved/);
+    app.element("historyDownload").handlers.click();
+    assert.match(await app.downloads[0].blob.text(), /\r\n"20",/);
+    await app.element("historyRefresh").handlers.click({type:"click"});
+    assert.equal(requests[2], "/api/history?limit=20");
+    assert.equal(app.element("historyOlder").disabled, false);
+    app.element("historyDialog").handlers.close();
+    assert.equal(app.element("historyOlder").disabled, true);
+});
 
 function record(overrides = {}) {
     return {

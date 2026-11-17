@@ -8,10 +8,38 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from history import read_history, save_analysis
+from history import read_history, read_history_page, save_analysis
 
 
 class HistoryTests(unittest.TestCase):
+    def test_pages_remain_complete_when_new_analyses_arrive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "history.sqlite3"
+            record = dict(prediction="normal", model="svm", added_noise_snr_db=None, analysis_time_ms=1.0)
+            for _ in range(45):
+                save_analysis(path, **record)
+            first = read_history_page(path)
+            self.assertEqual([row["id"] for row in first["history"]], list(range(45, 25, -1)))
+            self.assertTrue(first["has_more"])
+            save_analysis(path, **record)
+            second = read_history_page(path, before_id=int(first["next_before_id"]))
+            third = read_history_page(path, before_id=int(second["next_before_id"]))
+            ids = [row["id"] for page in (first, second, third) for row in page["history"]]
+            self.assertEqual(ids, list(range(45, 0, -1)))
+            self.assertFalse(third["has_more"])
+            self.assertIsNone(third["next_before_id"])
+            self.assertEqual(read_history(path)[0]["id"], 46)
+
+    def test_a_full_final_page_has_no_extra_page(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "history.sqlite3"
+            for _ in range(20):
+                save_analysis(path, prediction="sag", model="svm", added_noise_snr_db=40, analysis_time_ms=1.0)
+            page = read_history_page(path)
+            self.assertEqual(len(page["history"]), 20)
+            self.assertFalse(page["has_more"])
+            self.assertIsNone(page["next_before_id"])
+
     def test_failed_insert_preserves_existing_history(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "history.sqlite3"

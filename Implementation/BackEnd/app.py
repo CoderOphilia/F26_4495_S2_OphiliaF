@@ -15,7 +15,7 @@ from feature_extraction import (
     FEATURE_NAMES, FEATURE_VERSION, SAMPLE_COUNT, SAMPLE_RATE_HZ, extract_features,
 )
 from signal_generator import SIGNAL_TYPES
-from history import read_history, save_analysis
+from history import read_history_page, save_analysis
 
 
 frontend_folder = Path(__file__).resolve().parent.parent / "FrontEnd"
@@ -141,13 +141,15 @@ def classify():
 def history():
     try:
         limit = int(request.args.get("limit", "20"))
-        records = read_history(app.config["DATABASE_PATH"], limit)
+        before_id = request.args.get("before_id")
+        before_id = None if before_id is None else int(before_id)
+        page = read_history_page(app.config["DATABASE_PATH"], limit, before_id)
     except ValueError:
-        return jsonify(error="History limit must be a whole number between 1 and 100."), 400
+        return jsonify(error="Use a history limit from 1 to 100 and a positive record ID as the cursor."), 400
     except (sqlite3.Error, OSError):
         app.logger.exception("Classification history could not be read")
         return jsonify(error="Analysis history is unavailable. Please try again later."), 503
-    return jsonify(history=records)
+    return jsonify(page)
 
 
 @app.errorhandler(RequestEntityTooLarge)

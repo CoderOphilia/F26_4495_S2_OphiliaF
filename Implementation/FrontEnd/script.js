@@ -24,6 +24,7 @@ const historyButton = document.getElementById("historyButton");
 const historyDialog = document.getElementById("historyDialog");
 const historyClose = document.getElementById("historyClose");
 const historyRefresh = document.getElementById("historyRefresh");
+const historyOlder = document.getElementById("historyOlder");
 const historyDownload = document.getElementById("historyDownload");
 const historyStatus = document.getElementById("historyStatus");
 const historyRows = document.getElementById("historyRows");
@@ -47,6 +48,7 @@ let estimatedSampleRate = 0;
 let busy = false;
 let historyRequest = null;
 let historyRecords = [];
+let historyNextBeforeId = null;
 
 // Slider positions: 0 = off, 1 = 40 dB, 2 = 30 dB, 3 = 20 dB.
 const noiseConditions = [null, 40, 30, 20];
@@ -747,12 +749,14 @@ function describePrediction(label) {
 }
 
 // ---------- VIEW SAVED ANALYSES ----------
-async function loadHistory() {
+async function loadHistory(beforeId = null) {
     historyRequest?.abort();
     historyRows.replaceChildren();
     historyTableContainer.hidden = true;
     historyRecords = [];
     historyDownload.disabled = true;
+    historyNextBeforeId = null;
+    historyOlder.disabled = true;
 
     if (window.location.protocol === "file:") {
         historyStatus.textContent = "Open the app through the local server to view saved analyses.";
@@ -766,7 +770,8 @@ async function loadHistory() {
     const timeout = setTimeout(() => controller.abort(), 10000);
 
     try {
-        const response = await fetch("/api/history?limit=20", {
+        const query = beforeId === null ? "" : `&before_id=${encodeURIComponent(beforeId)}`;
+        const response = await fetch(`/api/history?limit=20${query}`, {
             signal: controller.signal,
             cache: "no-store"
         });
@@ -799,11 +804,15 @@ async function loadHistory() {
         });
         historyRows.replaceChildren(...rows);
         historyRecords = result.history;
+        historyNextBeforeId = result.has_more ? result.next_before_id : null;
+        historyOlder.disabled = historyNextBeforeId === null;
         historyDownload.disabled = rows.length === 0;
         historyTableContainer.hidden = rows.length === 0;
         historyStatus.textContent = rows.length === 0
-            ? "No saved analyses yet. Analyze a signal to add your first result."
-            : `Showing ${rows.length} saved ${rows.length === 1 ? "analysis" : "analyses"}. Most recent first.`;
+            ? (beforeId === null
+                ? "No saved analyses yet. Analyze a signal to add your first result."
+                : "No older analyses were found. Select Refresh history for the newest results.")
+            : `Showing ${rows.length} ${beforeId === null ? "recent" : "older"} saved ${rows.length === 1 ? "analysis" : "analyses"}. Newest first on this page.`;
     } catch (error) {
         if (historyRequest === controller) {
             historyStatus.textContent = error.name === "AbortError"
@@ -823,7 +832,12 @@ historyButton.addEventListener("click", () => {
     historyDialog.showModal();
     loadHistory();
 });
-historyRefresh.addEventListener("click", loadHistory);
+historyRefresh.addEventListener("click", () => loadHistory());
+historyOlder.addEventListener("click", () => {
+    if (historyNextBeforeId !== null) {
+        return loadHistory(historyNextBeforeId);
+    }
+});
 historyDownload.addEventListener("click", () => {
     if (historyRecords.length === 0) {
         return;
@@ -844,6 +858,8 @@ historyDialog.addEventListener("close", () => {
     historyRequest?.abort();
     historyRequest = null;
     historyRecords = [];
+    historyNextBeforeId = null;
+    historyOlder.disabled = true;
     historyDownload.disabled = true;
     historyRefresh.disabled = false;
     historyButton.focus();

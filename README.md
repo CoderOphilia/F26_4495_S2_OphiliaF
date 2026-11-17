@@ -130,7 +130,9 @@ the first successful analysis and persists across server restarts. Its data
 and journal files are ignored by Git. Failed saves return a service error.
 Select View history in the result card to see the newest 20 saved analyses
 in the app. The dialog shows the predicted result, model, noise setting, local
-date/time, and analysis duration. Refresh history reloads the latest records;
+date/time, and analysis duration. Older analyses loads the next page of 20
+records and is disabled on the final page. Refresh history returns to the
+newest page. ID cursors keep older pages stable when new analyses are saved.
 Close or Escape returns to the workspace. Narrow screens support horizontal
 table scrolling. The dialog includes empty history and connection error states.
 Download shown history CSV exports the currently displayed records, up to 20,

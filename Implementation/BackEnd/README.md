@@ -136,6 +136,9 @@ extraction, and prediction, and excludes saving the record. A cold first
 request can therefore take longer than later requests.
 
 Select View history in the result card to see the newest 20 saved analyses.
+Older analyses moves to the next page of saved results. It is disabled on the
+last page. Refresh history returns to the newest page. New analyses saved
+while browsing do not shift or repeat the records on older pages.
 The dialog shows the result, model, added noise, local date/time, and analysis
 duration. Refresh history retrieves the latest records. Close or Escape returns
 to the workspace. On narrow screens, scroll across the table to see every
@@ -148,10 +151,18 @@ A blank SNR cell means added noise was off. The button is enabled after saved
 results load and is disabled during refresh or when history is empty or
 unavailable. Refresh first to include newly saved analyses.
 
-The dialog uses `GET /api/history?limit=20`. Open
+The dialog uses `GET /api/history?limit=20`. The JSON response includes the
+`history` array, `has_more`, and `next_before_id`. The next cursor is a string
+record ID when another page exists, or null on the final page. Send it as
+`before_id` to load records older than that ID, for example
+`/api/history?limit=20&before_id=41`. Cursors must be positive SQLite record
+IDs. Existing `history` array consumers can continue reading that field.
+
+Open
 http://127.0.0.1:5000/api/history to inspect results as JSON or use
 `/api/history?limit=5` to retrieve five. Limits must be whole numbers between
-1 and 100. An empty history returns `{"history":[]}`.
+1 and 100. Empty history has an empty `history` array, `has_more` false, and
+`next_before_id` null.
 
 Records persist after the server restarts. Invalid inputs and failed model
 requests do not create history records. A database failure returns 503 so the
@@ -172,7 +183,8 @@ after closing/reopening, timeout recovery, CSV export and refresh behavior,
 the waveform CSV format, classification timing requirements, and direct HTML
 preview guidance. They also cover flat and out-of-range signals, noise changes,
 and recovery when a preview server returns HTML instead of API JSON. Backend
-tests verify both launchers and the committed models without retraining.
+tests verify both launchers and the committed models without retraining,
+history cursors, exact page boundaries, and inserts between page requests.
 
 ## Noise robustness experiment
 
