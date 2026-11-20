@@ -120,6 +120,7 @@ function clearRecording() {
 
     noiseSlider.value = "0";
     noiseLabel.textContent = "Off";
+    noiseSlider.setAttribute("aria-valuetext", noiseLabel.textContent);
 
     resetResult();
     updateControls();
@@ -346,6 +347,7 @@ function updatePreview() {
 
     noiseLabel.textContent =
         snr === null ? "Off" : `${snr} dB`;
+    noiseSlider.setAttribute("aria-valuetext", noiseLabel.textContent);
 
     if (snr === null) {
         // Copy the uploaded values without adding noise.
