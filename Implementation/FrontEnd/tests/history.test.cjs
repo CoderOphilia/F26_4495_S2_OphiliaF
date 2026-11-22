@@ -63,8 +63,56 @@ function loadApp(fetch, protocol = "http:") {
 }
 
 function response(history, pagination = {}) {
-    return { ok: true, json: async () => ({ history, ...pagination }) };
+    return { ok: true, json: async () => ({ history, has_more: false, next_before_id: null, ...pagination }) };
 }
+
+test("malformed saved records cannot be shown or exported and refresh permits recovery", async () => {
+    let records;
+    const app = loadApp(async () => response(records));
+    for (const invalid of [
+        null, record({id:0}), record({id:1.5}), record({id:Number.MAX_SAFE_INTEGER + 1}),
+        record({analyzed_at_utc:"invalid"}), record({model:"unknown"}),
+        record({prediction:"unknown"}), record({added_noise_snr_db:"40"}),
+        record({added_noise_snr_db:10}), record({analysis_time_ms:-1}),
+        record({analysis_time_ms:null}), record({analysis_time_ms:NaN}),
+        record({analysis_time_ms:Infinity})
+    ]) {
+        records = [record(), invalid];
+        await app.context.loadHistory();
+        assert.equal(app.element("historyRows").children.length, 0);
+        assert.equal(app.element("historyTableContainer").hidden, true);
+        assert.equal(app.element("historyDownload").disabled, true);
+        assert.equal(app.element("historyOlder").disabled, true);
+        assert.equal(app.element("historyRefresh").disabled, false);
+        assert.match(app.element("historyStatus").textContent, /Could not load history/);
+        app.element("historyDownload").handlers.click();
+        assert.equal(app.downloads.length, 0);
+    }
+    records = [record()];
+    await app.element("historyRefresh").handlers.click();
+    assert.equal(app.element("historyRows").children.length, 1);
+    assert.equal(app.element("historyDownload").disabled, false);
+});
+
+test("inconsistent paging replies cannot enable the older-page control", async () => {
+    let result;
+    const app = loadApp(async () => ({ok:true,json:async () => result}));
+    for (const invalid of [
+        null, [], {history:[record()]},
+        {history:[],has_more:true,next_before_id:null},
+        {history:[record()],has_more:true,next_before_id:1},
+        {history:[record()],has_more:true,next_before_id:"2"},
+        {history:[record()],has_more:false,next_before_id:"1"},
+        {history:Array.from({length:21}, () => record()),has_more:false,next_before_id:null}
+    ]) {
+        result = invalid;
+        await app.context.loadHistory();
+        assert.equal(app.element("historyRows").children.length, 0);
+        assert.equal(app.element("historyOlder").disabled, true);
+        assert.equal(app.element("historyDownload").disabled, true);
+        assert.equal(app.element("historyRefresh").disabled, false);
+    }
+});
 
 test("older pages use the server cursor and refresh returns to the newest results", async () => {
     const requests = [];

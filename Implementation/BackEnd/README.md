@@ -144,6 +144,11 @@ duration. Refresh history retrieves the latest records. Close or Escape returns
 to the workspace. On narrow screens, scroll across the table to see every
 column. Empty history and connection failures show a message with a next step.
 
+The browser validates saved records and paging metadata before rendering rows
+or enabling CSV export. Invalid dates, model/class names, durations, noise
+settings, IDs, or inconsistent page cursors show the history recovery message.
+Refresh history can retry after the service returns a valid response.
+
 Download shown history CSV exports the records currently displayed, up to 20,
 to `analysis_history.csv`. It includes record IDs, UTC timestamps, predicted
 classes, model keys, noise SNR, and full analysis durations in milliseconds.

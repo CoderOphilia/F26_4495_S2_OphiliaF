@@ -751,6 +751,42 @@ function describePrediction(label) {
 }
 
 // ---------- VIEW SAVED ANALYSES ----------
+function validateHistoryResponse(result) {
+    const invalidResponse = "The service returned an invalid history response.";
+    if (!result || !Array.isArray(result.history) || result.history.length > 20) {
+        throw new Error(invalidResponse);
+    }
+    for (const record of result.history) {
+        if (!record || !Number.isSafeInteger(record.id) || record.id < 1) {
+            throw new Error(invalidResponse);
+        }
+        if (
+            typeof record.analyzed_at_utc !== "string"
+            || !Number.isFinite(Date.parse(record.analyzed_at_utc))
+            || !["normal", "sag", "swell", "interruption", "harmonic_distortion"].includes(record.prediction)
+            || !["random_forest", "svm"].includes(record.model)
+        ) {
+            throw new Error(invalidResponse);
+        }
+        if (
+            typeof record.analysis_time_ms !== "number"
+            || !Number.isFinite(record.analysis_time_ms)
+            || record.analysis_time_ms < 0
+            || ![null, 20, 30, 40].includes(record.added_noise_snr_db)
+        ) {
+            throw new Error(invalidResponse);
+        }
+    }
+    if (typeof result.has_more !== "boolean") {
+        throw new Error(invalidResponse);
+    }
+    const lastRecord = result.history[result.history.length - 1];
+    const expectedCursor = result.has_more && lastRecord ? String(lastRecord.id) : null;
+    if (result.next_before_id !== expectedCursor || (result.has_more && !lastRecord)) {
+        throw new Error(invalidResponse);
+    }
+}
+
 async function loadHistory(beforeId = null) {
     historyRequest?.abort();
     historyRows.replaceChildren();
@@ -781,9 +817,7 @@ async function loadHistory(beforeId = null) {
         if (!response.ok) {
             throw new Error(result.error || "History is unavailable. Please try again.");
         }
-        if (!Array.isArray(result.history)) {
-            throw new Error("The service returned an invalid history response.");
-        }
+        validateHistoryResponse(result);
         if (controller.signal.aborted) {
             return;
         }
