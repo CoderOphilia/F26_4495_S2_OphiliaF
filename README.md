@@ -140,3 +140,42 @@ with UTC timestamps and full analysis durations to `analysis_history.csv`.
 A blank noise SNR cell means added noise was off.
 
 See the classification workflow for timing, API details, and UI test commands.
+
+
+## Completed research and final verification
+
+The scoped local application includes five-class inference, both classifiers,
+noise previews, waveform export and saved SQLite history. The additional
+research compares time-only, FFT-only and combined features at six conditions,
+five noise seeds and a second generator seed's held-out records. These remain
+simplified synthetic results, not real-device validation.
+
+- [Research design, measured findings and limitations](Implementation/Research/README.md)
+- [Fresh-install and end-to-end verification](Implementation/Research/Verification/README.md)
+- [Demonstration and defense guide](Implementation/Research/DemoGuide.md)
+
+From the repository root, after installing the documented requirements:
+
+```bash
+python Implementation/BackEnd/verify_application.py
+python -m unittest discover -s Implementation/BackEnd/tests -v
+node --test Implementation/FrontEnd/tests/history.test.cjs
+```
+
+The HTTP verifier uses a private temporary database and checks all five classes
+with both models, validation, history paging and persistence after a server
+process restart. Recorded verification passed 31 backend and 18 JavaScript tests.
+The browser verification record identifies the file-picker automation limitation.
+
+To reproduce the additional research, first generate the primary dataset if it
+is absent, then select new empty output folders:
+
+```bash
+python Implementation/BackEnd/research_validation.py --output Implementation/Research/Results_repeat
+python Implementation/BackEnd/validate_reference_signals.py --output Implementation/Research/Reference_repeat
+```
+
+The reference audit detects supplied CSVs in repository-root `RawData` or
+`Implementation/RawData` for a standalone workspace.
+Original serving models and baseline results are preserved. Local report drafts,
+temporary environments and personal history databases are excluded from Git.

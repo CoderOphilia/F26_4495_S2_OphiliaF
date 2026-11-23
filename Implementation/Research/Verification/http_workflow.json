@@ -1,0 +1,65 @@
+{
+  "python": "3.13.2",
+  "scikit_learn": "1.6.1",
+  "model_bundle_sha256": "4bb39d8f11fa531d4d238b7c5736dfae2673fb36e6344f25c78f50b848652ade",
+  "checks": [
+    "HTML, CSS and JavaScript served; private history initially empty",
+    "Five CSV classes classified correctly by both committed models",
+    "Invalid requests rejected without saved records; cursor pages complete without duplicates",
+    "All ten saved analyses survive a separate server process restart",
+    "Serving model bundle unchanged; verification database removed"
+  ],
+  "classifications": [
+    {
+      "class": "normal",
+      "model": "random_forest",
+      "prediction": "normal"
+    },
+    {
+      "class": "normal",
+      "model": "svm",
+      "prediction": "normal"
+    },
+    {
+      "class": "sag",
+      "model": "random_forest",
+      "prediction": "sag"
+    },
+    {
+      "class": "sag",
+      "model": "svm",
+      "prediction": "sag"
+    },
+    {
+      "class": "swell",
+      "model": "random_forest",
+      "prediction": "swell"
+    },
+    {
+      "class": "swell",
+      "model": "svm",
+      "prediction": "swell"
+    },
+    {
+      "class": "interruption",
+      "model": "random_forest",
+      "prediction": "interruption"
+    },
+    {
+      "class": "interruption",
+      "model": "svm",
+      "prediction": "interruption"
+    },
+    {
+      "class": "harmonic_distortion",
+      "model": "random_forest",
+      "prediction": "harmonic_distortion"
+    },
+    {
+      "class": "harmonic_distortion",
+      "model": "svm",
+      "prediction": "harmonic_distortion"
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,62 @@
+{
+  "method": "Shape, finiteness and checksum audit; first row of each supplied reference CSV plotted against a project example at the reference metadata settings: 50 Hz, 5 kHz, 20 ms. Parameters and phase are not fitted to the reference rows. This is a qualitative shape comparison, not an accuracy evaluation.",
+  "provenance": "Supplied RawData/Details.txt describes synthetic 17-class SEED-style recordings. The candidate Kaggle source matches the metadata, but the original download, licence and byte identity have not been verified. These files are not claimed as hardware measurements or IEEE DataPort data.",
+  "candidate_source": "https://www.kaggle.com/datasets/sumairaziz/seed-power-quality-disturbance-dataset",
+  "files": {
+    "Pure_Sinusoidal.csv": {
+      "sha256": "3417d0a2a919e17fb1039a1581e70a2cbc03b78723775f552a1be872c2ca5319",
+      "shape": [
+        1000,
+        100
+      ],
+      "finite": true,
+      "minimum": -1.0,
+      "maximum": 1.0,
+      "displayed_row": 0
+    },
+    "Sag.csv": {
+      "sha256": "f8c56b635510d0f5acb142e1142dd400895e538fc3a7e83640711f840d1a30ea",
+      "shape": [
+        1000,
+        100
+      ],
+      "finite": true,
+      "minimum": -1.0,
+      "maximum": 1.0,
+      "displayed_row": 0
+    },
+    "Swell.csv": {
+      "sha256": "44d0acf74afb0be231de2b32fcc11f10f222a03a465c62e93f920b8148bd3408",
+      "shape": [
+        1000,
+        100
+      ],
+      "finite": true,
+      "minimum": -1.79974669743459,
+      "maximum": 1.79974669743459,
+      "displayed_row": 0
+    },
+    "Interruption.csv": {
+      "sha256": "5962789feee32215c5921f6de5b30e7b1be4099ac88b149873ce91117d08d1ae",
+      "shape": [
+        1000,
+        100
+      ],
+      "finite": true,
+      "minimum": -1.0,
+      "maximum": 1.0,
+      "displayed_row": 0
+    },
+    "Harmonics.csv": {
+      "sha256": "1063347688ea6ccf870521e413ad816bcf408396c1d057f89ca383b695fa1706",
+      "shape": [
+        1000,
+        100
+      ],
+      "finite": true,
+      "minimum": -1.39351506400067,
+      "maximum": 1.39351506400067,
+      "displayed_row": 0
+    }
+  }
+}

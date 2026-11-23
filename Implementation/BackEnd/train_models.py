@@ -28,6 +28,17 @@ DEFAULT_DATASET = ROOT / "Data" / "Synthetic"
 DEFAULT_OUTPUT = ROOT / "Models"
 
 
+def model_candidates():
+    """Return fresh estimators for the shared validation-only selection rule."""
+    return {
+        "random_forest": [
+            RandomForestClassifier(n_estimators=200, max_depth=depth, min_samples_leaf=2, random_state=42)
+            for depth in (8, None)
+        ],
+        "svm": [make_pipeline(StandardScaler(), SVC(C=c, kernel="rbf", gamma="scale")) for c in (1, 10)],
+    }
+
+
 def evaluation(model, features, labels):
     predicted = model.predict(features)
     return {
@@ -75,13 +86,7 @@ def train_models(dataset_dir=DEFAULT_DATASET, output_dir=DEFAULT_OUTPUT):
     if not np.isfinite(features).all():
         raise ValueError("Extracted features must be finite.")
 
-    candidates = {
-        "random_forest": [
-            RandomForestClassifier(n_estimators=200, max_depth=depth, min_samples_leaf=2, random_state=42)
-            for depth in (8, None)
-        ],
-        "svm": [make_pipeline(StandardScaler(), SVC(C=c, kernel="rbf", gamma="scale")) for c in (1, 10)],
-    }
+    candidates = model_candidates()
     report = {
         "dataset_sha256": archive_hash,
         "dataset_seed": manifest["seed"],

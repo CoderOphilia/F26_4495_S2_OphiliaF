@@ -1,4 +1,4 @@
-"""Time-domain features for the power quality research project.
+"""Time-domain and FFT features for the power quality research project.
 """
 
 import numpy as np

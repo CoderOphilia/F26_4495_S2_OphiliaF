@@ -210,3 +210,28 @@ Results, confusion matrices, per-class metrics, CSV comparison, and the chart
 are saved in `Models/noise_experiment/`. Existing outputs are preserved. Use
 `--output Models/noise_repeat` to rerun in another folder. Report the measured
 scores as synthetic experiment results, with the generator's limitations.
+
+## Final research and application verification
+
+The additional study compares time-only, FFT-only and combined features at
+clean, 40, 35, 30, 25 and 20 dB, using five noise seeds and a second generator
+seed's test partition. It leaves the serving bundle unchanged. Existing output
+folders are preserved, so choose a new destination when reproducing results:
+
+```bash
+python BackEnd/research_validation.py --output Research/Results_repeat
+python BackEnd/validate_reference_signals.py --output Research/Reference_repeat
+python BackEnd/verify_application.py
+```
+
+Generate the primary dataset first if absent. Reference comparison requires
+the supplied five CSV matrices in `RawData`. The HTTP verifier uses a private
+temporary database and starts/stops its own servers; it needs local loopback
+socket access. It checks all five classes with both committed models, validation,
+history paging, and persistence after a process restart.
+
+See [research findings](../Research/README.md), the
+[verification record](../Research/Verification/README.md), and the
+[demo guide](../Research/DemoGuide.md). The optional live frontend handler check
+is `node FrontEnd/tests/live_workflow.cjs http://127.0.0.1:5000` with the app
+running and generated examples available. It adds eleven local history records.
