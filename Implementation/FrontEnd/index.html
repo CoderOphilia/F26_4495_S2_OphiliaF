@@ -91,6 +91,13 @@
                         <p id="noiseHelp" class="help-text">Lower SNR adds more noise. Off keeps the uploaded recording.</p>
                     </div>
                     <div class="field"><label for="modelSelect">Classification model</label><select id="modelSelect"><option value="random_forest">Random Forest</option><option value="svm">Support Vector Machine</option></select></div>
+                    <details class="model-guide">
+                        <summary>How the models learn</summary>
+                        <p><strong>Random Forest</strong> combines the answers from many decision trees. <strong>SVM</strong> learns boundaries between different signal groups.</p>
+                        <p>Both learn from labelled, computer-generated recordings. Separate recordings are used to choose settings and check predictions.</p>
+                        <p>Uploading a CSV uses a saved model to predict its signal type. It does not train the model again.</p>
+                        <p>A prediction can be wrong, especially with noise or unfamiliar recordings. Accuracy on real equipment has not yet been established.</p>
+                    </details>
                     <button type="button" id="analyzeButton" class="button button-primary" disabled>Analyze Signal</button>
                     <p class="help-text button-help">Classifies the displayed preview with 1,200 measurements at 6,000 Hz.</p>
                 </section>
